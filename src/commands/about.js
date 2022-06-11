@@ -3,8 +3,6 @@ import { MessageActionRow, MessageButton, MessageEmbed } from 'discord.js';
 
 export const data = new SlashCommandBuilder().setName('about').setDescription('About this bot!');
 
-export const permissions = 0;
-
 export const execute = async (interaction, client) => {
     const embed = new MessageEmbed()
     .setColor('BLURPLE')

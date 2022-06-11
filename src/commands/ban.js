@@ -7,7 +7,7 @@ import { Permissions } from "discord.js"
 
 export const data = new SlashCommandBuilder().setName("ban").setDescription("Bans a user").addUserOption(option => option.setName('user').setDescription('The user to ban.').setRequired(true)).addStringOption(option => option.setName('reason').setDescription('The reason for the ban.').setRequired(true))
 
-export const permissions = Permissions.FLAGS.BAN_USERS
+export const permissions = 'BAN_MEMBERS'
 
 export const execute = async (interaction, client) => {
     const user = await interaction.options.getUser('user')

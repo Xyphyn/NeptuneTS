@@ -8,8 +8,6 @@ import { findInDatabase } from "../database/mongodb.js";
 
 export const data = new SlashCommandBuilder().setName("warnings").setDescription("Gets warnings for a user").addUserOption(option => option.setName('user').setDescription('The user to view the warnings of.').setRequired(true)).addBooleanOption(option => option.setName('private').setDescription('Sets if it should be private or not. (Default true)').setRequired(false)).addBooleanOption(option => option.setName('show-id').setDescription('Sets if the warning ID should be shown or not. (Default false)').setRequired(false))
 
-export const permissions = Permissions.FLAGS.SEND_MESSAGES
-
 export const execute = async (interaction, client) => {
     await interaction.deferReply({ ephemeral: interaction.options.getBoolean('private') ?? true });
 

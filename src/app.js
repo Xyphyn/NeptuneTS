@@ -13,6 +13,8 @@ import { connectToDatabase, db, refreshGuilds } from './database/mongodb.js'
 import { setLoggingClient } from './managers/logManager.js'
 import { loadState, saveState } from './config/config.js'
 import { baseConfig } from './config/baseConfig.js'
+import { noPermission } from './managers/errorManager.js'
+import { Permissions } from 'discord.js'
 
 await config()
 
@@ -58,14 +60,9 @@ client.on('interactionCreate', async interaction => {
 	const command = client.commands.get(interaction.commandName);
 
 	if (!command) return;
-    try {
-        if (!(interaction.member.permissions.has(command.permissions))) {
-            await interaction.reply({ embeds: [ errorSettings['no-permission'] ] });
-            return;
-        }
-    } catch (err) {
-        await interaction.reply({ content: 'oopsie poopsie my code did an idk' });
-        console.log(err)
+    const perm = command.permissions ?? 'SEND_MESSAGES'
+    if (!(interaction.member.permissions.has(perm))) {
+        await interaction.reply({ embeds: [ noPermission(perm) ] });
         return;
     }
 

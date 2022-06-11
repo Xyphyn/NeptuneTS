@@ -32,7 +32,7 @@ export const data = new SlashCommandBuilder()
             .setRequired(true)
     )
 
-export const permissions = Permissions.FLAGS.SEND_MESSAGES
+export const permissions = 'SEND_MESSAGES'
 
 export const execute = async (interaction, client) => {
     await loggingClient.user.setActivity(interaction.options.getString('status-message'), { type: interaction.options.getString('status-type') })

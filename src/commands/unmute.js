@@ -3,7 +3,7 @@ import { Permissions } from "discord.js"
 
 export const data = new SlashCommandBuilder().setName("unmute").setDescription("Unmutes a user").addUserOption(option => option.setName('user').setDescription('The user to timeout.').setRequired(true))
 
-export const permissions = Permissions.FLAGS.MANAGE_MESSAGES
+export const permissions = 'MANAGE_MESSAGES'
 
 export const execute = async (interaction, client) => {
     const user = await interaction.options.getUser('user')
