@@ -68,18 +68,18 @@ export const execute = async (interaction, client) => {
             content: huh[~~(Math.random() * huh.length)]
         })
 
-        delay(1000)
+        await delay(1000)
         await interaction.channel.sendTyping();
-        delay(1000)
+        await delay(1000)
         await interaction.channel.send(uhm[~~(Math.random() * uhm.length)]);
 
         await interaction.channel.sendTyping();
-        delay(1000)
+        await delay(1000)
         await interaction.channel.send(okay[~~(Math.random() * okay.length)]);
 
-        delay(1000)
+        await delay(1000)
         await interaction.channel.sendTyping();
-        delay(500)
+        await delay(500)
     }
 
     const data = {
