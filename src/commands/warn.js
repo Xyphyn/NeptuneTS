@@ -85,7 +85,7 @@ export const execute = async (interaction, client) => {
     
         const embed = new MessageEmbed().setColor(config[interaction.guild.id].embedSettings.color).setAuthor({ name: user.username, iconURL: user.displayAvatarURL() }).addField('Offending User', `<@${user.id}>`, true).addField('Moderator', `<@${moderator}>`, true).addField('Reason', reason ?? 'No reason specified.', true).setFooter({ text: `${data.id}` })
     
-        await logEmbed(embed)
+        await logEmbed(embed, interaction.guild)
     
         await interaction.channel.send({
             content: `${config[interaction.guild.id].emojiSettings.warn} <@${interaction.options.getUser('user').id}> has been warned. **${interaction.options.getString('reason') ?? 'No reason specified.'}**`,
@@ -103,7 +103,7 @@ export const execute = async (interaction, client) => {
     
             embed.setColor(config[interaction.guild.id].embedSettings.errorColor).setFields([{ name: 'Muted', value: '**Automatic mute after 3 warnings within 24 hours.**' }])
     
-            await logEmbed(embed)
+            await logEmbed(embed, interaction.guild)
         }
 
     } else if (interaction.options.getSubcommand() === 'delete') {
@@ -121,7 +121,7 @@ export const execute = async (interaction, client) => {
         const embed = new MessageEmbed().setColor(config[interaction.guild.id].embedSettings.errorColor).addField('Warning deleted', `${uuid}`, true).addField('Moderator', `<@${interaction.user.id}>`, true)
         const embed2 = new MessageEmbed().setColor(config[interaction.guild.id].embedSettings.errorColor).setTitle('Warning deleted').setDescription(`<:WindowsRecycleBin:824380487920910348> Warning of UUID \`${uuid}\` has been deleted.`)
 
-        await logEmbed(embed2)
+        await logEmbed(embed2, interaction.guild)
 
         await interaction.reply({
             embeds: [embed2]

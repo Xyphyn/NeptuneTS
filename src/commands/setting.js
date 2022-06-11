@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders"
 import { MessageEmbed } from "discord.js";
 import { Permissions } from "discord.js"
-import { config } from "../config/config.js";
+import { config, saveState } from "../config/config.js";
 
 export const data = new SlashCommandBuilder().setName("config").setDescription("Config commands.").addSubcommand(subcommand => subcommand.setName('set').setDescription('Sets a config value.').addStringOption(option => option.setName('key').setDescription('The key of the config value to set.').setRequired(true)).addStringOption(option => option.setName('value').setDescription('The value to set the config value to.').setRequired(true)))
 
@@ -30,6 +30,8 @@ export const execute = async (interaction, client) => {
         const value = interaction.options.getString('value')
 
         leaf(config[interaction.guild.id], key, value)
+
+        await saveState()
 
         embed.setTitle('Set').setDescription(`<:WindowsSuccess:824380489712140359> Set ${key} to ${value}`)
 

@@ -3,8 +3,10 @@ import { deleteAllInDatabase, deleteFromDatabase, findInDatabase, insertToDataba
 import { baseConfig } from "./baseConfig.js";
 
 export const saveState = async () => {
-    await deleteAllInDatabase('config')
-    await insertToDatabase('config', config)
+    return new Promise(async (resolve, reject) => {
+        await deleteAllInDatabase('config')
+        await insertToDatabase('config', config)
+    })
 }
 
 export const loadState = async () => {
