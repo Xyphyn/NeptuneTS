@@ -68,6 +68,8 @@ client.on('interactionCreate', async interaction => {
 	try {
 		await command.execute(interaction, client);
 	} catch (error) {
+        // Error handler
+
         const causes = {
             'Missing Permissions': 'The user is probably not able to be punished.'
         }
@@ -76,7 +78,7 @@ client.on('interactionCreate', async interaction => {
         .setTitle('Error')
         .setDescription(`<:BSOD:984972563358814228> **${error}** occured during execution!`)
         .addField('Message', error.message)
-        .addField('Stack', error.stack.split("\n")[4])
+        .addField('Stack', `${error.stack.split("\n")[4] ?? 'No stack trace available'}`)
         
         if (causes[error.message]) {
             embed.addField('Likely Cause', causes[error.message])

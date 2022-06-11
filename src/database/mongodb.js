@@ -3,6 +3,7 @@ import { MongoClient } from 'mongodb'
 import { createSpinner } from 'nanospinner'
 import { baseConfig } from '../config/baseConfig.js'
 import { config, loadState, saveState, setConfig } from '../config/config.js'
+import { deploy } from '../deploy-commands.js'
 import { dbConfig } from './dbConfig.js'
 
 
@@ -16,6 +17,8 @@ export const refreshGuilds = async (client) => {
                 config[guild] = baseConfig
             }
         })
+
+        deploy()
     
         saveState()
         resolve()

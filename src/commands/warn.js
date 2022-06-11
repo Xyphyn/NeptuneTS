@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders"
 import { Permissions } from "discord.js"
 import { dbConfig } from "../database/dbConfig.js"
-import { insertToDatabase } from "../database/mongodb.js"
+import { deleteFromDatabase, insertToDatabase } from "../database/mongodb.js"
 import { v4 as uuid } from 'uuid'
 import { loggingConfig } from "../config/logging.js"
 import { MessageEmbed } from "discord.js"
@@ -29,7 +29,6 @@ export const execute = async (interaction, client) => {
             return
         }
 
-        await interaction.deferReply();
         const reason = await interaction.options.getString('reason')
         const moderator = await interaction.user.id
         const time = new Date().getTime()
@@ -55,7 +54,7 @@ export const execute = async (interaction, client) => {
                 'why though?'
             ]
 
-            await interaction.editReply({
+            await interaction.reply({
                 content: huh[~~(Math.random() * huh.length)]
             })
             
@@ -91,6 +90,13 @@ export const execute = async (interaction, client) => {
         await interaction.channel.send({
             content: `${config[interaction.guild.id].emojiSettings.warn} <@${interaction.options.getUser('user').id}> has been warned. **${interaction.options.getString('reason') ?? 'No reason specified.'}**`,
         })
+
+        if (!(interaction.replied)) {
+            interaction.reply({
+                content: 'Warned that user.',
+                ephemeral: true
+            })
+        }
     
         if (await decidePunishment(user, interaction.guild)) {
             await interaction.channel.send(`${config[interaction.guild.id].emojiSettings.mute} <@${interaction.options.getUser('user').id}> has been muted. **Automatic mute after 3 warnings within 24 hours.**`)
@@ -108,7 +114,6 @@ export const execute = async (interaction, client) => {
             return
         }
         
-        await interaction.deferReply();
         const uuid = await interaction.options.getString('uuid')
 
         deleteFromDatabase(dbConfig.warningCollection, { id: uuid })
@@ -118,7 +123,7 @@ export const execute = async (interaction, client) => {
 
         await logEmbed(embed2)
 
-        await interaction.editReply({
+        await interaction.reply({
             embeds: [embed2]
         })
     }
