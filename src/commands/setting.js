@@ -3,13 +3,12 @@ import { MessageEmbed } from "discord.js";
 import { Permissions } from "discord.js"
 import { config, saveState } from "../config/config.js";
 
-export const data = new SlashCommandBuilder().setName("config").setDescription("Config commands.").addSubcommand(subcommand => subcommand.setName('set').setDescription('Sets a config value.').addStringOption(option => option.setName('key').setDescription('The key of the config value to set.').setRequired(true)).addStringOption(option => option.setName('value').setDescription('The value to set the config value to.').setRequired(true)))
-
+export const data = new SlashCommandBuilder().setName("config").setDescription("Config commands.").addSubcommand(subcommand => subcommand.setName('set').setDescription('Sets a config value.').addStringOption(option => option.setName('key').setDescription('The key of the config value to set.').setRequired(true)).addStringOption(option => option.setName('value').setDescription('The value to set the config value to.').setRequired(true))).addSubcommand(subcommand => subcommand.setName('get').setDescription('Gets a config value.').addStringOption(option => option.setName('key').setDescription('The key of the config value to get.').setRequired(true)))
 export const permissions = Permissions.FLAGS.ADMINISTRATOR
 
 function leaf(obj, path, value) {
     const pList = path.split('.');
-    const key = pList.pop();
+    const key = pList.pop(); 
     const pointer = pList.reduce((accumulator, currentValue) => {
       if (accumulator[currentValue] === undefined) accumulator[currentValue] = {};
       return accumulator[currentValue];

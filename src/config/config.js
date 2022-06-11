@@ -6,6 +6,7 @@ export const saveState = async () => {
     return new Promise(async (resolve, reject) => {
         await deleteAllInDatabase('config')
         await insertToDatabase('config', config)
+        resolve()
     })
 }
 

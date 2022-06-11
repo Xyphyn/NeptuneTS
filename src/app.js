@@ -44,6 +44,10 @@ client.once('ready', async () => {
 
     await client.user.setActivity("your mother", { type: "WATCHING" })
     setLoggingClient(client)
+
+    setInterval(async () => {
+        await saveState()
+    }, 30000)
 });
 
 client.on('guildCreate', async () => {
@@ -76,7 +80,7 @@ client.on('interactionCreate', async interaction => {
 
         const embed = new MessageEmbed().setColor(embedSettings.errorColor)
         .setTitle('Error')
-        .setDescription(`<:BSOD:984972563358814228> **${error}** occured during execution!`)
+        .setDescription(`<:BSOD:984972563358814228> \`${error.name}\` occured during execution!`)
         .addField('Message', error.message)
         .addField('Stack', `${error.stack.split("\n")[4] ?? 'No stack trace available'}`)
         
