@@ -16,6 +16,13 @@ export const refreshGuilds = async (client) => {
             if (!config[guild]) {
                 config[guild] = baseConfig
             }
+
+            // https://stackoverflow.com/questions/55671957/loop-through-one-object-and-set-its-values-from-another-object
+            for (const prop in baseConfig) {
+                if (!(prop in config[guild])) {
+                    config[guild][prop] = baseConfig[prop]
+                }
+            }
         })
 
         deploy()
