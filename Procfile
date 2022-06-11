@@ -1,0 +1,1 @@
+bot: pnpm run start
