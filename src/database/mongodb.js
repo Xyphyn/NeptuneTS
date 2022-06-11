@@ -7,6 +7,21 @@ import { dbConfig } from './dbConfig.js'
 
 
 export let db = undefined
+
+export const refreshGuilds = async (client) => {
+    return new Promise((resolve, reject) => {
+        const guilds = client.guilds.cache.map(guild => guild.id)
+        guilds.forEach(guild => {
+            if (!config[guild]) {
+                config[guild] = baseConfig
+            }
+        })
+    
+        saveState()
+        resolve()
+    })
+}
+
 export async function connectToDatabase(db_name, _client) {
     MongoClient.connect(process.env.MONGO_URI, async (err, client) => {
         const spinner = createSpinner(chalk.yellow(`Connecting to database...`)).start()
@@ -20,15 +35,8 @@ export async function connectToDatabase(db_name, _client) {
             setConfig(baseConfig)
             await saveState()
         }
-    
-        const guilds = _client.guilds.cache.map(guild => guild.id)
-        guilds.forEach(guild => {
-            if (!config[guild]) {
-                config[guild] = baseConfig
-            }
-        })
-    
-        await saveState()
+        
+        await refreshGuilds(_client)
     })
 }
 

@@ -1,1 +1,1 @@
-bot: pnpm run start
+bot: npm run start

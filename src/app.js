@@ -9,7 +9,7 @@ import fs from 'fs'
 import { embedSettings } from './config/embeds.js'
 import { errorSettings } from './config/errors.js'
 import { deploy } from './deploy-commands.js'
-import { connectToDatabase, db } from './database/mongodb.js'
+import { connectToDatabase, db, refreshGuilds } from './database/mongodb.js'
 import { setLoggingClient } from './managers/logManager.js'
 import { loadState, saveState } from './config/config.js'
 import { baseConfig } from './config/baseConfig.js'
@@ -45,6 +45,10 @@ client.once('ready', async () => {
     await client.user.setActivity("your mother", { type: "WATCHING" })
     setLoggingClient(client)
 });
+
+client.on('guildCreate', async () => {
+    await refreshGuilds(client)
+})
 
 client.on('interactionCreate', async interaction => {
 	const command = client.commands.get(interaction.commandName);
