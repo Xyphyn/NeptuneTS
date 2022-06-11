@@ -6,7 +6,21 @@ import { logEmbed } from "../managers/logManager.js"
 import { Permissions } from "discord.js"
 import { emojiSettings } from "../config/emojis.js"
 
-export const data = new SlashCommandBuilder().setName("mute").setDescription("Times out a user").addUserOption(option => option.setName('user').setDescription('The user to timeout.').setRequired(true)).addStringOption(option => option.setName('reason').setDescription('The reason for the timeout.').setRequired(true)).addStringOption(option => option.setName('duration').setDescription('The duration of the timeout.').setRequired(true))
+export const data = new SlashCommandBuilder()
+    .setName("mute")
+    .setDescription("Times out a user")
+    .addUserOption(option => option
+        .setName('user')
+        .setDescription('The user to timeout.')
+        .setRequired(true))
+    .addStringOption(option => option
+        .setName('reason')
+        .setDescription('The reason for the timeout.')
+        .setRequired(true))
+    .addStringOption(option => option
+        .setName('duration')
+        .setDescription('The duration of the timeout.')
+        .setRequired(true))
 
 export const permissions = 'MANAGE_MESSAGES'
 

@@ -1,7 +1,13 @@
 import { SlashCommandBuilder } from "@discordjs/builders"
 import { Permissions } from "discord.js"
 
-export const data = new SlashCommandBuilder().setName("unmute").setDescription("Unmutes a user").addUserOption(option => option.setName('user').setDescription('The user to timeout.').setRequired(true))
+export const data = new SlashCommandBuilder()
+    .setName("unmute")
+    .setDescription("Unmutes a user")
+    .addUserOption(option => option
+        .setName('user')
+        .setDescription('The user to timeout.')
+        .setRequired(true))
 
 export const permissions = 'MANAGE_MESSAGES'
 

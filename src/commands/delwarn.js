@@ -7,7 +7,13 @@ import { deleteFromDatabase } from "../database/mongodb.js"
 import { noPermission } from "../managers/errorManager.js"
 import { logEmbed } from "../managers/logManager.js"
 
-export const data = new SlashCommandBuilder().setName("delwarn").setDescription("Deletes a warning").addStringOption(option => option.setName('uuid').setDescription('The uuid of the warning to delete.').setRequired(true))
+export const data = new SlashCommandBuilder()
+    .setName("delwarn")
+    .setDescription("Deletes a warning")
+    .addStringOption(option => option
+        .setName('uuid')
+        .setDescription('The uuid of the warning to delete.')
+        .setRequired(true))
 
 export const execute = async (interaction, client) => {
     if (!interaction.member.permissions.has(Permissions.FLAGS.BAN_MEMBERS)) {

@@ -5,7 +5,17 @@ import ms from "ms"
 import { logEmbed } from "../managers/logManager.js"
 import { Permissions } from "discord.js"
 
-export const data = new SlashCommandBuilder().setName("ban").setDescription("Bans a user").addUserOption(option => option.setName('user').setDescription('The user to ban.').setRequired(true)).addStringOption(option => option.setName('reason').setDescription('The reason for the ban.').setRequired(true))
+export const data = new SlashCommandBuilder()
+    .setName("ban")
+    .setDescription("Bans a user")
+    .addUserOption(option => option
+        .setName('user')
+        .setDescription('The user to ban.')
+        .setRequired(true))
+    .addStringOption(option => option
+        .setName('reason')
+        .setDescription('The reason for the ban.')
+        .setRequired(true))
 
 export const permissions = 'BAN_MEMBERS'
 

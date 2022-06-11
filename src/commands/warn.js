@@ -11,8 +11,19 @@ import { logEmbed } from "../managers/logManager.js"
 import { emojiSettings } from "../config/emojis.js"
 import { config } from "../config/config.js"
 import { noPermission } from "../managers/errorManager.js"
+import { delay } from "../managers/util.js"
 
-export const data = new SlashCommandBuilder().setName("warn").setDescription("Warning commands").addUserOption(option => option.setName('user').setDescription('The user to warn.').setRequired(true)).addStringOption(option => option.setName('reason').setDescription('The reason for the warning.').setRequired(false))
+export const data = new SlashCommandBuilder()
+    .setName("warn")
+    .setDescription("Warning commands")
+    .addUserOption(option => option
+        .setName('user')
+        .setDescription('The user to warn.')
+        .setRequired(true))
+    .addStringOption(option => option
+        .setName('reason')
+        .setDescription('The reason for the warning.')
+        .setRequired(false))
 
 export const permissions = 'SEND_MESSAGES'
 
@@ -57,18 +68,18 @@ export const execute = async (interaction, client) => {
             content: huh[~~(Math.random() * huh.length)]
         })
 
-        await new Promise((resolve, reject) => { setTimeout(() => resolve(), 1000) });
-
+        delay(1000)
         await interaction.channel.sendTyping();
-        await new Promise((resolve, reject) => { setTimeout(() => resolve(), 750) });
+        delay(1000)
         await interaction.channel.send(uhm[~~(Math.random() * uhm.length)]);
 
         await interaction.channel.sendTyping();
-        await new Promise((resolve, reject) => { setTimeout(() => resolve(), 1000) });
+        delay(1000)
         await interaction.channel.send(okay[~~(Math.random() * okay.length)]);
 
-        await new Promise((resolve, reject) => { setTimeout(() => resolve(), 1000) });
+        delay(1000)
         await interaction.channel.sendTyping();
+        delay(500)
     }
 
     const data = {
