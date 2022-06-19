@@ -37,7 +37,6 @@ export async function connectToDatabase(db_name, _client) {
         const spinner = createSpinner(chalk.yellow(`Connecting to database...`)).start()
         if (err) throw err
         db = client.db(db_name)
-        spinner.success({ text: `${chalk.green(`Connected to database`)}`})
         await loadState()
 
         // If there is nothing in the database, save the default config.
@@ -47,6 +46,7 @@ export async function connectToDatabase(db_name, _client) {
         }
         
         await refreshGuilds(_client)
+        spinner.success({ text: `${chalk.green(`Connected to database`)}`})
     })
 }
 

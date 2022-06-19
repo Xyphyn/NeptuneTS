@@ -21,15 +21,14 @@ export const permissions = 'BAN_MEMBERS'
 
 export const execute = async (interaction, client) => {
     const user = await interaction.options.getUser('user')
+    const guildMember = await interaction.guild.members.fetch(user.id)
     const reason = await interaction.options.getString('reason')
     const moderator = await interaction.user.id
 
     const embed = new MessageEmbed().setColor(config[interaction.guild.id].embedSettings.embedColor).setAuthor({ name: user.username, iconURL: user.displayAvatarURL() }).setDescription('Ban').addField('Offending User', `<@${user.id}>`, true).addField('Moderator', `<@${moderator}>`, true).addField('Reason', reason ?? 'No reason specified.', true)
 
-    const guildMember = interaction.guild.members.cache.get(user.id)
-
     if (guildMember.bannable) {
-        interaction.guild.members.cache.get(user.id).ban({
+        guildMember.ban({
             days: 0, reason: reason ?? 'No reason specified.'
         })
     } else {
@@ -40,9 +39,9 @@ export const execute = async (interaction, client) => {
         return
     }
 
-    logEmbed(embed)
+    logEmbed(embed, interaction.guild)
 
     await interaction.reply({
-        content: `${config[interaction.guild.id].emojiSettings.ban} <@${interaction.options.getUser('user').id}> has been banned. **${interaction.options.getString('reason') ?? 'No reason specified.'}**`,
+        content: `${config[interaction.guild.id].emojiSettings.ban} <@${user.id}> has been banned. **${interaction.options.getString('reason') ?? 'No reason specified.'}**`,
     })
 }

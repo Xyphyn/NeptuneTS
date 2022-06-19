@@ -15,6 +15,7 @@ import { loadState, saveState } from './config/config.js'
 import { baseConfig } from './config/baseConfig.js'
 import { noPermission } from './managers/errorManager.js'
 import { Permissions } from 'discord.js'
+import { MessageCollector } from 'discord.js'
 
 await config()
 
@@ -74,12 +75,13 @@ client.on('interactionCreate', async interaction => {
         const causes = {
             'Missing Permissions': 'The user is probably not able to be punished.'
         }
+        const stack = error.stack
 
         const embed = new MessageEmbed().setColor(embedSettings.errorColor)
         .setTitle('Error')
         .setDescription(`<:BSOD:984972563358814228> \`${error.name}\` occured during execution!`)
         .addField('Message', error.message)
-        .addField('Stack', `${error.stack.split("\n")[4] ?? 'No stack trace available'}`)
+        .addField('Stack', `${stack.split("\n")[4] ?? 'No stack trace available'}`)
         
         if (causes[error.message]) {
             embed.addField('Likely Cause', causes[error.message])
@@ -87,6 +89,16 @@ client.on('interactionCreate', async interaction => {
 
         try {
 		    await interaction.reply({ embeds: [ embed ] });
+            const collector = new MessageCollector(interaction.channel, m => m.author.id === interaction.author.id, { time: 5000 });
+            collector.on('collect', message => {
+                if (message.content === 'stack pls') {
+                    const stackEmbed = new MessageEmbed().setColor(embedSettings.errorColor)
+                        .setTitle('Full Stack')
+                        .setDescription(`\`\`\`js${stack}\`\`\``)
+                    message.channel.send({ embeds: [ stackEmbed ] })
+                }
+            })
+        
         } catch (err) {
             try {
                 await interaction.channel.send({ embeds: [ embed ] });
