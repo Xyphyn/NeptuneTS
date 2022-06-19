@@ -26,12 +26,14 @@ export const execute = async (interaction, client) => {
 
     const embed = new MessageEmbed().setColor(config[interaction.guild.id].embedSettings.embedColor).setAuthor({ name: user.username, iconURL: user.displayAvatarURL() }).setDescription('Ban').addField('Offending User', `<@${user.id}>`, true).addField('Moderator', `<@${moderator}>`, true).addField('Reason', reason ?? 'No reason specified.', true)
 
-    if (user.bannable) {
+    const guildMember = interaction.guild.members.cache.get(user.id)
+
+    if (guildMember.bannable) {
         interaction.guild.members.cache.get(user.id).ban({
             days: 0, reason: reason ?? 'No reason specified.'
         })
     } else {
-        const embed2 = new MessageEmbed().setColor(config[interaction.guild.id].embedSettings.errorColor).setTitle('Ban failed').setDescription(`<:WindowsCritical:824380490051747840> Failed to ban <@${user.id}>. Ya sure they can be banned?`)
+        const embed2 = new MessageEmbed().setColor(config[interaction.guild.id].embedSettings.errorColor).setTitle('Ban failed').setDescription(`<:WindowsCritical:824380490051747840> Failed to ban <@${user.id}>. You sure they can be banned?`)
         await interaction.reply({
             embeds: [ embed2 ]
         })
