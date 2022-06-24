@@ -112,6 +112,7 @@ export const execute = async (interaction, client) => {
 
         embed.setColor(config[interaction.guild.id].embedSettings.errorColor).setFields([{ name: 'Muted', value: '**Automatic mute after 3 warnings within 24 hours.**' }])
 
-        await logEmbed(embed, interaction.guild)
+        logEmbed(embed, interaction.guild)
+        console.log('Punishment completed')
     }
 }

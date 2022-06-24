@@ -2,11 +2,7 @@ import { findInDatabase } from '../database/mongodb.js'
 import { punishmentConfig } from '../config/punishment.js'
 
 export const decidePunishment = async (member, server) => {
-    const warnings = await findInDatabase('warnings', { user: member.id, guild: server.id}).toArray()
-    /**
-     * @type {number}
-     * @description The amount of warnings the user has gotten within 24 hours
-     */
+    const warnings = await findInDatabase('warnings', { user: member.id, guild: server.id }).toArray()
     let infractions = 0
 
     for (const warning of warnings) {
@@ -14,8 +10,11 @@ export const decidePunishment = async (member, server) => {
             infractions++
         }
     }
+
+    console.log(infractions)
+    console.log(punishmentConfig.warningsUntilMute)
     if (infractions >= punishmentConfig.warningsUntilMute) {
-        const guildMember = server.members.cache.get(member.id)
+        const guildMember = await server.members.fetch(member.id)
         await guildMember.timeout(punishmentConfig.punishmentTime * (infractions - punishmentConfig.warningsUntilMute + 1))
         return true;
     } else return false;

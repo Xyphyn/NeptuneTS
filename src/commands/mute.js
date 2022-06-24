@@ -35,7 +35,7 @@ export const execute = async (interaction, client) => {
     const time = ms(duration) ?? ms('1h')
     interaction.guild.members.cache.get(user.id).timeout(time)
 
-    logEmbed(embed)
+    logEmbed(embed, interaction.guild)
 
     await interaction.reply({
         content: `${config[interaction.guild.id].emojiSettings.mute} <@${interaction.options.getUser('user').id}> has been muted. **${interaction.options.getString('reason') ?? 'No reason specified.'}**`,

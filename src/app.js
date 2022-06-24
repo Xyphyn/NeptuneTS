@@ -97,6 +97,7 @@ client.on('interactionCreate', async interaction => {
                         .setDescription(`\`\`\`js${stack}\`\`\``)
                     message.channel.send({ embeds: [ stackEmbed ] })
                 }
+                collector.stop()
             })
         
         } catch (err) {
