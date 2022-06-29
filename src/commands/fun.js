@@ -8,6 +8,7 @@ import { Collector } from "discord.js";
 import { v4 as uuid } from 'uuid';
 import { ButtonInteraction } from "discord.js";
 import { MessageComponentInteraction } from "discord.js";
+import { FetchError } from "node-fetch";
 
 export const data = new SlashCommandBuilder()
     .setName('fun')
@@ -167,9 +168,15 @@ export const execute = async (interaction) => {
             await interaction.deferReply()
             const subreddit = interaction.options.getString('subreddit') ?? 'memes'
             const res = await fetch(`https://www.reddit.com/r/${subreddit}.json`)
-            let json = await res.json()
+            let json
+            try {
+                json = await res.json()
+            } catch (e) {
+                throw new FetchError('Subreddit not found.')
+            }
+            if (res.status === 404 || json.data === undefined) throw new FetchError('Subreddit not found.')
             const id = 'reddit-next'
-            let index = 23
+            let index = -1
             const row = new MessageActionRow()
                 .addComponents(
                     new MessageButton()
@@ -188,9 +195,19 @@ export const execute = async (interaction) => {
 
             const update = async () => {
                 index++
-                if (json.data.children[index] == undefined) { if (index < 100) { await refresh(index); } else { disable(); return } }
+
+                if (json.data.children[index] == undefined || json.data.children[index].data == undefined) {
+                    if (index < 100 && (json.data.children.length >= 25)) {
+                        await refresh(index);
+                    } else {
+                        disable(); return
+                    } 
+                }
+
                 const post = json.data.children[index]
+
                 if (post.data.thumbnail == 'nsfw') { update(); return }
+
                 const embed = new MessageEmbed()
                     .setTitle(post.data.title)
                     .setImage(post.data.url)
