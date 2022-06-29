@@ -23,6 +23,12 @@ export const refreshGuilds = async (client) => {
                     config[guild][prop] = baseConfig[prop]
                 }
             }
+
+            for (const prop in config[guild]) {
+                if (!(prop in baseConfig)) {
+                    delete config[guild][prop]
+                }
+            }
         })
 
         deploy()

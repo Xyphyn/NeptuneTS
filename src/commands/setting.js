@@ -27,8 +27,10 @@ function leaf(obj, path, value) {
       if (accumulator[currentValue] === undefined) accumulator[currentValue] = {};
       return accumulator[currentValue];
     }, obj);
-    pointer[key] = value;
-    return obj;
+    if (pointer[key] != undefined) {
+        pointer[key] = value;
+        return obj;
+    } else return false
 }
 
 export const execute = async (interaction, client) => {
@@ -42,11 +44,15 @@ export const execute = async (interaction, client) => {
         const key = interaction.options.getString('key')
         const value = interaction.options.getString('value')
 
-        leaf(config[interaction.guild.id], key, value)
+        const result = leaf(config[interaction.guild.id], key, value)
 
         await saveState()
 
         embed.setTitle('Set').setDescription(`<:WindowsSuccess:824380489712140359> Set ${key} to ${value}`)
+
+        if (!result) {
+            embed.setTitle('Failed').setDescription(`<:WindowsCritical:824380490051747840> Failed to set ${key} to ${value}`)
+        }
 
         await interaction.editReply({
             embeds: [embed]
