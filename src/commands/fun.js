@@ -5,6 +5,9 @@ import fetch from 'node-fetch'
 import { MessageActionRow } from "discord.js";
 import { MessageButton } from "discord.js";
 import { Collector } from "discord.js";
+import { v4 as uuid } from 'uuid';
+import { ButtonInteraction } from "discord.js";
+import { MessageComponentInteraction } from "discord.js";
 
 export const data = new SlashCommandBuilder()
     .setName('fun')
@@ -23,6 +26,15 @@ export const data = new SlashCommandBuilder()
         .addBooleanOption(option => option
             .setName('animated')
             .setDescription('Gets an animated cat.')
+        )
+    )
+    .addSubcommand(subcommand => subcommand
+        .setName('reddit')
+        .setDescription('Gets a random post from a subreddit.')
+        .addStringOption(option => option
+            .setName('subreddit')
+            .setDescription('The subreddit to get posts from.')
+            .setRequired(true)
         )
     )
 
@@ -97,21 +109,23 @@ export const execute = async (interaction) => {
         case 'cat': {
             const message = await interaction.deferReply()
             const animated = interaction.options.getBoolean('animated')
+            const id = uuid()
             const row = new MessageActionRow()
                 .addComponents(
                     new MessageButton()
-                        .setCustomId('cat-another')
+                        .setCustomId(id)
                         .setLabel('Another! 🔄️')
                         .setStyle('SECONDARY')
                 )
 
             const getCat = async () => {
-                const res = await fetch(`https://api.thecatapi.com/v1/images/search${animated ? '?mime_types=gif' : ''}`)
+                const url = animated ? 'https://api.thecatapi.com/v1/images/search?mime_types=gif' : 'https://cataas.com/cat?json=true'
+                const res = await fetch(url)
                 const json = await res.json()
 
                 const embed = new MessageEmbed()
-                    .setTitle(`Kitty ${['😺', '😸', '😹', '😻'][Math.floor(4 * Math.random())]}`)
-                    .setImage(json[0].url)
+                    .setTitle(`Meow ${['😺', '😸', '😹', '😻'][Math.floor(4 * Math.random())]}`)
+                    .setImage(animated ? json[0].url : `https://cataas.com${json.url}`)
                     .setColor(config[interaction.guild.id].embedSettings.color)
 
                 await interaction.editReply({
@@ -123,16 +137,37 @@ export const execute = async (interaction) => {
             getCat()
 
             const collector = interaction.channel.createMessageComponentCollector({
-                filter: (int) => { try { return int.message.id === message.id } catch (e) { return true }},
+                filter: async (int) => {
+                    try {
+                        const reply = await interaction.fetchReply()
+                        if ((int.message.id === reply.id) && int.isButton()) { if (!(int.user == interaction.user)) { 
+                            int.reply({ content: 'Those buttons are not for you.', ephemeral: true }); return false } return true } 
+                        else {
+                            return false
+                        } 
+                    } catch (e) {
+                        return false 
+                    }
+                },
                 time: 900000
             })
 
             collector.on('collect', btnInt => {
-                if (btnInt.customId === 'cat-another') {
+                if (btnInt.customId === id) {
                     getCat()
                 }
-                btnInt.deferUpdate()
+                try {
+                    btnInt.deferUpdate()
+                } catch (e) {
+                    // i have no clue what happened
+                }
             })
+        }
+        case 'reddit': {
+            const subreddit = interaction.options.getString('subreddit')
+            const res = await fetch(`https://www.reddit.com/r/${subreddit}.json`)
+            const json = await res.json()
+
         }
     }    
 } 

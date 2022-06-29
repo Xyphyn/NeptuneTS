@@ -115,6 +115,16 @@ client.on('interactionCreate', async interaction => {
                 })
             } catch (err) {
                 await interaction.channel.send({ embeds: [ embed ] });
+                const collector = new MessageCollector(interaction.channel, m => m.author.id === interaction.author.id, { time: 5000 });
+                collector.on('collect', message => {
+                    if (message.content === 'stack pls') {
+                        const stackEmbed = new MessageEmbed().setColor(embedSettings.errorColor)
+                            .setTitle('Full Stack')
+                            .setDescription(`\`\`\`js${stack}\`\`\``)
+                        message.channel.send({ embeds: [ stackEmbed ] })
+                    }
+                    collector.stop()
+                })
             }
         }
 	}
