@@ -73,7 +73,8 @@ client.on('interactionCreate', async interaction => {
         // Error handler
 
         const causes = {
-            'Missing Permissions': 'The user is probably not able to be punished.'
+            'Missing Permissions': 'The user is probably not able to be punished.',
+            'Unexpected token < in JSON at position 0': 'You might have input an invalid/inactive subreddit.'
         }
         const stack = error.stack
 

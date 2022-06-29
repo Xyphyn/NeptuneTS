@@ -33,8 +33,8 @@ export const data = new SlashCommandBuilder()
         .setDescription('Gets a random post from a subreddit.')
         .addStringOption(option => option
             .setName('subreddit')
-            .setDescription('The subreddit to get posts from.')
-            .setRequired(true)
+            .setDescription('The subreddit to get posts from. (Default memes)')
+            .setRequired(false)
         )
     )
 
@@ -164,10 +164,102 @@ export const execute = async (interaction) => {
             })
         }
         case 'reddit': {
-            const subreddit = interaction.options.getString('subreddit')
+            await interaction.deferReply()
+            const subreddit = interaction.options.getString('subreddit') ?? 'memes'
             const res = await fetch(`https://www.reddit.com/r/${subreddit}.json`)
-            const json = await res.json()
+            let json = await res.json()
+            const id = 'reddit-next'
+            let index = 23
+            const row = new MessageActionRow()
+                .addComponents(
+                    new MessageButton()
+                        .setCustomId('reddit-next')
+                        .setLabel('Next')
+                        .setStyle('SECONDARY'),
+                )
 
+            const refresh = async (index) => {
+                return new Promise(async (resolve, reject) => {
+                    const res = await fetch(`https://www.reddit.com/r/${subreddit}.json?limit=${index + 25}`)
+                    json = await res.json()
+                    resolve()
+                })
+            }
+
+            const update = async () => {
+                index++
+                if (json.data.children[index] == undefined) { if (index < 100) { await refresh(index); } else { disable(); return } }
+                const post = json.data.children[index]
+                if (post.data.thumbnail == 'nsfw') { update(); return }
+                const embed = new MessageEmbed()
+                    .setTitle(post.data.title)
+                    .setImage(post.data.url)
+                    .setDescription(post.data.selftext)
+                    .setURL(`https://reddit.com${post.data.permalink}`)
+                    .setFooter({ text: `👍 ${post.data.ups} 💬 ${post.data.num_comments}` })
+                    .setColor('#2F3136')
+
+                await interaction.editReply({
+                    embeds: [embed],
+                    components: [row]
+                })
+            }
+            
+            const collector = interaction.channel.createMessageComponentCollector({
+                filter: async (int) => {
+                    try {
+                        const reply = await interaction.fetchReply()
+                        if ((int.message.id === reply.id) && int.isButton()) { if (!(int.user == interaction.user)) { 
+                            int.reply({ content: 'Those buttons are not for you.', ephemeral: true }); return false } return true } 
+                        else {
+                            return false
+                        } 
+                    } catch (e) {
+                        return false 
+                    }
+                },
+                time: 900000
+            })
+
+            const disable = () => {
+                // clear collector if nothing collected within 1 minute
+                collector.stop()
+                const row = new MessageActionRow()
+                    .addComponents(
+                        new MessageButton()
+                            .setCustomId('reddit-next')
+                            .setLabel('Next')
+                            .setStyle('SECONDARY')
+                            .setDisabled(true) 
+                    )
+                
+                interaction.editReply({
+                    components: [row]
+                })
+            }
+
+            let timeout = setTimeout(() => {
+                disable()
+            }, 30000)
+
+            collector.on('collect', btnInt => {
+                clearTimeout(timeout)
+
+                timeout = setTimeout(() => {
+                    disable()
+                }, 30000)
+
+                if (btnInt.customId === id) {
+                    update()
+                }
+                try {
+                    btnInt.deferUpdate()
+                } catch (e) {
+                    // i have no clue what happened
+                }
+            })
+
+            update()
         }
     }    
 } 
