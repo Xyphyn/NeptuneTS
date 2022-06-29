@@ -22,8 +22,8 @@ export const execute = async (message) => {
         timestamp: new Date()
     })
 
-    if (config[message.guild.id].logging.logDirectMessages) {
-        client.channels.cache.get(config[message.guild.id].logging.loggingChannel).send({
+    if (loggingConfig.logDirectMessages) {
+        client.channels.cache.get(loggingConfig.loggingChannel).send({
             embeds: [embed]
         })
     }

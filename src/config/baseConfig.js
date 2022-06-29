@@ -23,7 +23,4 @@ export let baseConfig = {
         warningsUntilMute: 3,
         punishmentTime: 30 * 60 * 1000
     },
-    testConfigs: {
-        test1: 'If this is in the database, that means that my code is working.',
-    }
 }

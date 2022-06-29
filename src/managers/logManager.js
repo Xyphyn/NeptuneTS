@@ -1,6 +1,5 @@
 import { Guild } from "discord.js";
 import { config } from "../config/config.js";
-import { loggingConfig } from "../config/logging.js";
 
 export let loggingClient = undefined
 
