@@ -2,6 +2,7 @@ import { MessageEmbed } from "discord.js";
 import { embedSettings } from "../config/embeds.js";
 import { loggingConfig } from "../config/logging.js";
 import { client } from '../app.js'
+import { config } from "../config/config.js";
 
 export const name = 'messageCreate';
 export const once = false
@@ -21,8 +22,8 @@ export const execute = async (message) => {
         timestamp: new Date()
     })
 
-    if (loggingConfig.logDirectMessages) {
-        client.channels.cache.get(loggingConfig.loggingChannel).send({
+    if (config[message.guild.id].logging.logDirectMessages) {
+        client.channels.cache.get(config[message.guild.id].logging.loggingChannel).send({
             embeds: [embed]
         })
     }
