@@ -169,11 +169,7 @@ export const execute = async (interaction) => {
             const subreddit = interaction.options.getString('subreddit') ?? 'memes'
             const res = await fetch(`https://www.reddit.com/r/${subreddit}.json`)
             let json
-            try {
-                json = await res.json()
-            } catch (e) {
-                throw new FetchError('Subreddit not found.')
-            }
+            try { json = await res.json(); } catch (e) { throw new FetchError('Subreddit not found.') }
             if (res.status === 404 || json.data === undefined) throw new FetchError('Subreddit not found.')
             const id = 'reddit-next'
             let index = -1
@@ -206,7 +202,7 @@ export const execute = async (interaction) => {
 
                 const post = json.data.children[index]
 
-                if (post.data.thumbnail == 'nsfw') { update(); return }
+                if (post.data.thumbnail == 'nsfw' || post.data.stickied || post.data.pinned) { update(); return }
 
                 const embed = new MessageEmbed()
                     .setTitle(post.data.title)
@@ -250,9 +246,13 @@ export const execute = async (interaction) => {
                             .setDisabled(true) 
                     )
                 
-                interaction.editReply({
-                    components: [row]
-                })
+                try {
+                    interaction.editReply({
+                        components: [row]
+                    }) }
+                catch (e) {
+                    // message was deleted
+                }
             }
 
             let timeout = setTimeout(() => {
