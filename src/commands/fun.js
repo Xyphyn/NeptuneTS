@@ -163,6 +163,7 @@ export const execute = async (interaction) => {
                     // i have no clue what happened
                 }
             })
+            break
         }
         case 'reddit': {
             await interaction.deferReply()
@@ -277,6 +278,8 @@ export const execute = async (interaction) => {
             })
 
             update()
+
+            break
         }
     }    
 } 

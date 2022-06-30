@@ -11,11 +11,13 @@ export const decidePunishment = async (member, server) => {
         }
     }
 
-    console.log(infractions)
-    console.log(punishmentConfig.warningsUntilMute)
     if (infractions >= punishmentConfig.warningsUntilMute) {
         const guildMember = await server.members.fetch(member.id)
-        await guildMember.timeout(punishmentConfig.punishmentTime * (infractions - punishmentConfig.warningsUntilMute + 1))
+        try {
+            await guildMember.timeout(punishmentConfig.punishmentTime * (infractions - punishmentConfig.warningsUntilMute + 1))
+        } catch (e) {
+            // Doesn't really matter. You can tell they weren't timed out
+        }
         return true;
     } else return false;
 }

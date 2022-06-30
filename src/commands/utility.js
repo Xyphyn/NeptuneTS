@@ -24,6 +24,10 @@ export const data = new SlashCommandBuilder()
             .setRequired(false)
         )
     )
+    .addSubcommand(subcommand => subcommand
+        .setName('epoch')
+        .setDescription('Gets the current unix timestamp.')
+    )
 
 export const execute = async (interaction, client) => {
     const subcommand = interaction.options.getSubcommand()
@@ -40,6 +44,19 @@ export const execute = async (interaction, client) => {
                 .setTitle(title)
                 .setDescription(description)
                 .setColor(color)
+
+            await interaction.reply({
+                embeds: [embed],
+            })
+
+            break
+        }
+        case 'epoch': {
+            const epoch = Math.floor(Date.now() / 1000)
+            const embed = new MessageEmbed()
+                .setTitle(`Timestamp: \`${epoch}\``)
+                .setDescription(`<t:${epoch}>`)
+                .setColor('#2F3136')
 
             await interaction.reply({
                 embeds: [embed],
