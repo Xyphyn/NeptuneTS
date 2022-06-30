@@ -172,7 +172,8 @@ export const execute = async (interaction) => {
             let json
             try { json = await res.json(); } catch (e) { throw new FetchError('Subreddit not found.') }
             if (res.status === 404 || json.data === undefined) throw new FetchError('Subreddit not found.')
-            const id = 'reddit-next'
+            const nextId = 'reddit-next'
+            const prevId = 'reddit-prev'
             let index = -1
             const row = new MessageActionRow()
                 .addComponents(
@@ -180,6 +181,10 @@ export const execute = async (interaction) => {
                         .setCustomId('reddit-next')
                         .setLabel('Next')
                         .setStyle('SECONDARY'),
+                    new MessageButton()
+                        .setCustomId('reddit-prev')
+                        .setLabel('Previous')
+                        .setStyle('SECONDARY')
                 )
 
             const refresh = async (index) => {
@@ -190,20 +195,20 @@ export const execute = async (interaction) => {
                 })
             }
 
-            const update = async () => {
-                index++
+            const update = async (next) => {
+                next ? index++ : index--
 
                 if (json.data.children[index] == undefined || json.data.children[index].data == undefined) {
-                    if (index < 100 && (json.data.children.length >= 25)) {
+                    if (index < 100 && (json.data.children.length >= 25) && index >= 0) {
                         await refresh(index);
                     } else {
-                        disable(); return
+                        disable((next ? true : false), (next ? false: true)); return
                     } 
                 }
 
                 const post = json.data.children[index]
 
-                if (post.data.thumbnail == 'nsfw' || post.data.stickied || post.data.pinned) { update(); return }
+                if (post.data.thumbnail == 'nsfw' || post.data.stickied || post.data.pinned) { update(next); return }
 
                 const embed = new MessageEmbed()
                     .setTitle(post.data.title)
@@ -235,16 +240,21 @@ export const execute = async (interaction) => {
                 time: 900000
             })
 
-            const disable = () => {
+            const disable = (next, prev) => {
                 // clear collector if nothing collected within 1 minute
-                collector.stop()
+                if (next && prev) collector.stop()
                 const row = new MessageActionRow()
                     .addComponents(
                         new MessageButton()
                             .setCustomId('reddit-next')
                             .setLabel('Next')
                             .setStyle('SECONDARY')
-                            .setDisabled(true) 
+                            .setDisabled(next),
+                        new MessageButton()
+                            .setCustomId('reddit-prev')
+                            .setLabel('Previous')
+                            .setStyle('SECONDARY')
+                            .setDisabled(prev)
                     )
                 
                 try {
@@ -257,19 +267,22 @@ export const execute = async (interaction) => {
             }
 
             let timeout = setTimeout(() => {
-                disable()
+                disable(true, true)
             }, 30000)
 
             collector.on('collect', btnInt => {
                 clearTimeout(timeout)
 
                 timeout = setTimeout(() => {
-                    disable()
+                    disable(true, true)
                 }, 30000)
 
-                if (btnInt.customId === id) {
-                    update()
+                if (btnInt.customId === nextId) {
+                    update(true)
+                } else {
+                    update(false)
                 }
+
                 try {
                     btnInt.deferUpdate()
                 } catch (e) {
@@ -277,7 +290,7 @@ export const execute = async (interaction) => {
                 }
             })
 
-            update()
+            update(true)
 
             break
         }
