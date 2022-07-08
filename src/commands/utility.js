@@ -28,6 +28,36 @@ export const data = new SlashCommandBuilder()
         .setName('epoch')
         .setDescription('Gets the current unix timestamp.')
     )
+    .addSubcommand(subcommand => subcommand
+        .setName('status')
+        .setDescription('Sets the status of the bot')
+        .addStringOption(option =>
+            option.setName('status-type')
+                .setDescription('The type of status')
+                .setRequired(true)
+                .setChoices({
+                    name: 'Competing',
+                    value: 'COMPETING'
+                }, {
+                    name: 'Listening',
+                    value: 'LISTENING'
+                }, {
+                    name: 'Watching',
+                    value: 'WATCHING'
+                }, {
+                    name: 'Streaming',
+                    value: 'STREAMING'
+                }, {
+                    name: 'Playing',
+                    value: 'PLAYING'
+                })
+        )
+        .addStringOption(option => 
+            option.setName('status-message')
+                .setDescription('The message to display')
+                .setRequired(true)
+        )    
+    )
 
 export const execute = async (interaction, client) => {
     const subcommand = interaction.options.getSubcommand()
@@ -60,6 +90,23 @@ export const execute = async (interaction, client) => {
 
             await interaction.reply({
                 embeds: [embed],
+            })
+
+            break
+        }
+        case 'status': {
+            const message = interaction.options.getString('status-message')
+            const type = interaction.options.getString('status-type')
+
+            await client.user.setActivity(message, { type: type })
+
+            const embed = new MessageEmbed()
+                .setTitle(`Status set`)
+                .setDescription(`<:WindowsSuccess:977721596468928533> Status was set to \`${type} ${message}\``)
+                .setColor('#2F3136')
+
+            interaction.reply({
+                embeds: [embed]
             })
         }
     }

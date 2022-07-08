@@ -127,7 +127,7 @@ export const execute = async (interaction) => {
                 const embed = new MessageEmbed()
                     .setTitle(`Meow ${['😺', '😸', '😹', '😻'][Math.floor(4 * Math.random())]}`)
                     .setImage(animated ? json[0].url : `https://cataas.com${json.url}`)
-                    .setColor(config[interaction.guild.id].embedSettings.color)
+                    .setColor('#2F3136')
 
                 await interaction.editReply({
                     embeds: [embed],

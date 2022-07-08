@@ -45,7 +45,7 @@ client.once('ready', async () => {
     await deploy()
     await connectToDatabase('discord', client)
 
-    await client.user.setActivity("your mother", { type: "WATCHING" })
+    await client.user.setActivity("GTA 6", { type: "PLAYING" })
     setLoggingClient(client)
 
     setInterval(async () => {
