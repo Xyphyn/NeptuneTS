@@ -49,12 +49,13 @@ client.once('ready', async () => {
     setLoggingClient(client)
 
     setInterval(async () => {
-        await saveState()
+        refreshGuilds(client)
     }, 30000)
 });
 
 client.on('guildCreate', async () => {
     await refreshGuilds(client)
+    await deploy()
 })
 
 client.on('interactionCreate', async interaction => {
@@ -74,7 +75,8 @@ client.on('interactionCreate', async interaction => {
 
         const causes = {
             'Missing Permissions': 'The user is probably not able to be punished.',
-            'Unexpected token < in JSON at position 0': 'You might have input an invalid/inactive subreddit.'
+            'Unexpected token < in JSON at position 0': 'You might have input an invalid/inactive subreddit.',
+            'Subreddit not found.': 'That subreddit does not exist.'
         }
         const stack = error.stack
 
@@ -82,10 +84,11 @@ client.on('interactionCreate', async interaction => {
         .setTitle('Error')
         .setDescription(`<:BSOD:984972563358814228> \`${error.name}\` occured during execution!`)
         .addField('Message', error.message)
-        .addField('Stack', `${stack.split("\n")[4] ?? 'No stack trace available'}`)
         
         if (causes[error.message]) {
             embed.addField('Likely Cause', causes[error.message])
+        } else {
+            embed.addField('Stack', `${stack.split("\n")[4] ?? 'No stack trace available'}`)
         }
 
         try {

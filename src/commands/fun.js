@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { MessageEmbed } from "discord.js";
-import { config } from "../config/config.js";
+import { config, getConfig } from "../config/config.js";
 import fetch from 'node-fetch'
 import { MessageActionRow } from "discord.js";
 import { MessageButton } from "discord.js";
@@ -216,7 +216,7 @@ export const execute = async (interaction) => {
                     .setDescription(post.data.selftext)
                     .setURL(`https://reddit.com${post.data.permalink}`)
                     .setFooter({ text: `👍 ${post.data.ups} 💬 ${post.data.num_comments}` })
-                    .setColor('#2F3136')
+                    .setColor(getConfig(interaction).embedSettings.color)
 
                 await interaction.editReply({
                     embeds: [embed],

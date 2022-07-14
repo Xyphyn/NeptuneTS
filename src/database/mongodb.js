@@ -17,21 +17,24 @@ export const refreshGuilds = async (client) => {
                 config[guild] = baseConfig
             }
 
-            // https://stackoverflow.com/questions/55671957/loop-through-one-object-and-set-its-values-from-another-object
-            for (const prop in baseConfig) {
-                if (!(prop in config[guild])) {
-                    config[guild][prop] = baseConfig[prop]
+            const merge = (obj1, obj2) => {
+                for (var p in obj2) {
+                    try {
+                        if (obj2[p].constructor == Object) {
+                            obj1[p] = merge(obj1[p], obj2[p]);
+                        } else {
+                            obj1[p] = obj2[p];
+                        }
+                    } catch (e) {
+                        obj1[p] = obj2[p];
+                    }
                 }
-            }
 
-            for (const prop in config[guild]) {
-                if (!(prop in baseConfig)) {
-                    delete config[guild][prop]
-                }
-            }
+                return obj1;
+            };
+
+            config[guild] = merge(config[guild], baseConfig)
         })
-
-        deploy()
     
         saveState()
         resolve()

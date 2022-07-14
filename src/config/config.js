@@ -15,9 +15,13 @@ export const loadState = async () => {
     config = config[0]
 }
 
-export const setConfig = (config) => {
-    config = config
-} 
+export const setConfig = (_config) => {
+    config = _config
+}
+
+export const getConfig = (interaction) => {
+    return config[interaction.guild.id]
+}
 
 export let config = {
     '977253880163352577': {
@@ -30,9 +34,6 @@ export let config = {
             warn: '<:WindowsWarning:977721596846436392>',
             ban: '<:WindowsShieldFailure:977721596506681366>',
             mute: '<:criticalerror:977722153644478534>'
-        },
-        errorSettings: {
-            "no-permission": new MessageEmbed().setTitle('Error').setColor('RED').setDescription(`<:WindowsCritical:824380490051747840> You do not have permission to use this command.`),
         },
         logging: {
             loggingChannel: '977253966851227730',

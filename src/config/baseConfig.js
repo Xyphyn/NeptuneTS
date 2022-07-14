@@ -9,7 +9,8 @@ export let baseConfig = {
     emojiSettings: {
         warn: '<:WindowsWarning:977721596846436392>',
         ban: '<:WindowsShieldFailure:977721596506681366>',
-        mute: '<:criticalerror:977722153644478534>'
+        mute: '<:criticalerror:977722153644478534>',
+        success: '<:WindowsSuccess:977721596468928533>'
     },
     errorSettings: {
         "no-permission": new MessageEmbed().setTitle('Error').setColor('RED').setDescription(`<:WindowsCritical:824380490051747840> You do not have permission to use this command.`),
