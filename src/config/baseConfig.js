@@ -21,7 +21,8 @@ export let baseConfig = {
     },
     punishmentSettings: {
         dmUser: false,
-        warningsUntilMute: 3,
+        warningsUntilMute: 2,
+        warningHours: 48,
         punishmentTime: 30 * 60 * 1000
     },
 }

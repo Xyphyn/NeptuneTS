@@ -9,7 +9,7 @@ import { embedSettings } from "../config/embeds.js"
 import { decidePunishment } from "../managers/punishmentManager.js"
 import { logEmbed } from "../managers/logManager.js"
 import { emojiSettings } from "../config/emojis.js"
-import { config } from "../config/config.js"
+import { config, getConfig } from "../config/config.js"
 import { noPermission } from "../managers/errorManager.js"
 import { delay } from "../managers/util.js"
 
@@ -108,11 +108,10 @@ export const execute = async (interaction, client) => {
     }
 
     if (await decidePunishment(user, interaction.guild)) {
-        await interaction.channel.send(`${config[interaction.guild.id].emojiSettings.mute} <@${interaction.options.getUser('user').id}> has been muted. **Automatic mute after 3 warnings within 24 hours.**`)
+        await interaction.channel.send(`${config[interaction.guild.id].emojiSettings.mute} <@${interaction.options.getUser('user').id}> has been muted. **Automatic mute after 3 warnings within ${getConfig(interaction).punishmentSettings.warningHours} hours.**`)
 
         embed.setColor(config[interaction.guild.id].embedSettings.errorColor).setFields([{ name: 'Muted', value: '**Automatic mute after 3 warnings within 24 hours.**' }])
 
         logEmbed(embed, interaction.guild)
-        console.log('Punishment completed')
     }
 }

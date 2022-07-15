@@ -1,12 +1,13 @@
 import { findInDatabase } from '../database/mongodb.js'
 import { punishmentConfig } from '../config/punishment.js'
+import { config, getConfig } from '../config/config.js'
 
 export const decidePunishment = async (member, server) => {
     const warnings = await findInDatabase('warnings', { user: member.id, guild: server.id }).toArray()
     let infractions = 0
 
     for (const warning of warnings) {
-        if (warning.time > Date.now() - 86400000) {
+        if (warning.time > Date.now() - config[server.id].punishmentSettings.warningHours * 60 * 60 * 1000) {
             infractions++
         }
     }

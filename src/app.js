@@ -4,20 +4,20 @@ const spinner = createSpinner(chalk.yellow(`Starting bot...`)).start()
 
 import { Client, Collection, Intents, MessageEmbed } from 'discord.js'
 import chalk from 'chalk'
-import { config } from 'dotenv'
+import { config as dotenv_config } from 'dotenv'
 import fs from 'fs'
 import { embedSettings } from './config/embeds.js'
 import { errorSettings } from './config/errors.js'
 import { deploy } from './deploy-commands.js'
 import { connectToDatabase, db, refreshGuilds } from './database/mongodb.js'
 import { setLoggingClient } from './managers/logManager.js'
-import { loadState, saveState } from './config/config.js'
+import { loadState, saveState, config } from './config/config.js'
 import { baseConfig } from './config/baseConfig.js'
 import { noPermission } from './managers/errorManager.js'
 import { Permissions } from 'discord.js'
 import { MessageCollector } from 'discord.js'
 
-await config()
+await dotenv_config()
 
 export const client = new Client({ partials: ["CHANNEL"], intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_BANS, Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS, Intents.FLAGS.GUILD_PRESENCES, Intents.FLAGS.DIRECT_MESSAGES] },)
 
@@ -44,8 +44,13 @@ client.once('ready', async () => {
     spinner.success({ text: chalk.green(`Logged in as ${chalk.bold(client.user.username)}`) })
     await deploy()
     await connectToDatabase('discord', client)
+        .then(() => {
+            try {
+            client.user.setActivity(`${config.status.message}`, { type: `${config.status.type}` })
+            }
+            catch(e) { console.log(config), console.log(e) }
+        })
 
-    await client.user.setActivity("GTA 6", { type: "PLAYING" })
     setLoggingClient(client)
 
     setInterval(async () => {

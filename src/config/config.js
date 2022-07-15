@@ -24,25 +24,5 @@ export const getConfig = (interaction) => {
 }
 
 export let config = {
-    '977253880163352577': {
-        embedSettings: {
-            color: '#0099ff',
-            successColor: '#0eee0e',
-            errorColor: '#ff0f0f',
-        },
-        emojiSettings: {
-            warn: '<:WindowsWarning:977721596846436392>',
-            ban: '<:WindowsShieldFailure:977721596506681366>',
-            mute: '<:criticalerror:977722153644478534>'
-        },
-        logging: {
-            loggingChannel: '977253966851227730',
-            logDirectMessages: true
-        },
-        punishmentSettings: {
-            dmUser: false,
-            warningsUntilMute: 3,
-            punishmentTime: 30 * 60 * 1000
-        }
-    }
+
 }

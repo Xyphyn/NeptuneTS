@@ -42,20 +42,22 @@ export const refreshGuilds = async (client) => {
 }
 
 export async function connectToDatabase(db_name, _client) {
-    MongoClient.connect(process.env.MONGO_URI, async (err, client) => {
-        const spinner = createSpinner(chalk.yellow(`Connecting to database...`)).start()
-        if (err) throw err
-        db = client.db(db_name)
-        await loadState()
+    return new Promise((resolve, reject) => {
+        MongoClient.connect(process.env.MONGO_URI, async (err, client) => {
+            const spinner = createSpinner(chalk.yellow(`Connecting to database...`)).start()
+            if (err) throw err
+            db = client.db(db_name)
+            await loadState()
+    
+            // If there is nothing in the database, save the default config.
+            if (config == undefined || config == null) {
+            }
+            
+            await refreshGuilds(_client)
+            spinner.success({ text: `${chalk.green(`Connected to database`)}`})
 
-        // If there is nothing in the database, save the default config.
-        if (config == undefined || config == null) {
-            setConfig(baseConfig)
-            await saveState()
-        }
-        
-        await refreshGuilds(_client)
-        spinner.success({ text: `${chalk.green(`Connected to database`)}`})
+            resolve()
+        })
     })
 }
 

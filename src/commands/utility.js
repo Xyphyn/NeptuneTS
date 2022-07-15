@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders"
 import { MessageEmbed } from "discord.js"
-import { config } from "../config/config.js"
+import { config, getConfig } from "../config/config.js"
 
 export const data = new SlashCommandBuilder()
     .setName('utility')
@@ -100,10 +100,15 @@ export const execute = async (interaction, client) => {
 
             await client.user.setActivity(message, { type: type })
 
+            config.status = {
+                message: message,
+                type: type
+            }
+
             const embed = new MessageEmbed()
                 .setTitle(`Status set`)
                 .setDescription(`<:WindowsSuccess:977721596468928533> Status was set to \`${type} ${message}\``)
-                .setColor('#2F3136')
+                .setColor(`${getConfig(interaction).embedSettings.color}`)
 
             interaction.reply({
                 embeds: [embed]
