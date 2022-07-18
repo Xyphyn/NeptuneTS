@@ -20,6 +20,10 @@ export const setConfig = (_config) => {
 }
 
 export const getConfig = (interaction) => {
+    if (interaction.replied === undefined) {
+        // This means that a guild id was passed in instead
+        return config[interaction]
+    }
     return config[interaction.guild.id]
 }
 

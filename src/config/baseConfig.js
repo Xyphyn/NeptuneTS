@@ -25,4 +25,7 @@ export let baseConfig = {
         warningHours: 48,
         punishmentTime: 30 * 60 * 1000
     },
+    translation: {
+        enabled: false
+    }
 }
