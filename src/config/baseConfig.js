@@ -26,6 +26,6 @@ export let baseConfig = {
         punishmentTime: 30 * 60 * 1000
     },
     translation: {
-        enabled: false
+        enabled: true
     }
 }

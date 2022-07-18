@@ -41,6 +41,7 @@ const translate = async (lang, reaction) => {
 
 const languages = {
     '🇬🇧': 'en',
+    '🇺🇸': 'en',
     '🇪🇸': 'es',
     '🇫🇷': 'fr',
     '🇷🇺': 'ru',
@@ -55,7 +56,7 @@ const languageNames = {
 
 export const execute = async (reaction) => {
     if (reaction.message.author.bot) return 
-    if (!(getConfig(reaction.guild.id).translation.enabled)) return
+    // if (!(getConfig(reaction.message.guild.id).translation.enabled)) return
 
     if (reaction.emoji.name in languages) {
         translate(languages[reaction.emoji.name], reaction)
