@@ -45,6 +45,8 @@ const languages = {
     '🇪🇸': 'es',
     '🇫🇷': 'fr',
     '🇷🇺': 'ru',
+    '🇨🇳': 'zh-CN',
+    '🇯🇵': 'ja'
 }
 
 const languageNames = {
@@ -52,6 +54,8 @@ const languageNames = {
     'es': 'Spanish',
     'fr': 'French',
     'ru': 'Russian',
+    'zh-CN': 'Chinese',
+    'ja': 'Japanese',
 }
 
 export const execute = async (reaction) => {
