@@ -6,7 +6,7 @@ import { getConfig } from "../config/config.js"
 export const name = 'messageReactionAdd'
 export const once = false
 
-const browser = await puppeteer.launch({ })
+const browser = await puppeteer.launch({ args: [ '--no-sandbox' ] })
 const page = await browser.newPage()
 
 const result = async (url) => {
