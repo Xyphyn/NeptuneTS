@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { MessageEmbed } from "discord.js";
 import { loadState } from "../config/config.js";
+import os from 'os'
 
 export const data = new SlashCommandBuilder()
     .setName('dev')
@@ -8,6 +9,14 @@ export const data = new SlashCommandBuilder()
     .addSubcommand(subcommand => subcommand
         .setName('sync')
         .setDescription('Refreshes config from database')
+    )
+    .addSubcommand(subcommand => subcommand
+        .setName('resources')
+        .setDescription('Resource usage of the bot')
+    )
+    .addSubcommand(subcommand => subcommand
+        .setName('stop')
+        .setDescription('Stops the bot.')
     )
 
 export const permissions = 'SEND_MESSAGES'
@@ -31,6 +40,31 @@ export const execute = async (interaction) => {
             interaction.reply({
                 embeds: [ embed ]
             })
+
+            break
+        }
+        case 'resources': {
+            embed.setTitle('<:system:998732644575621201> Resources')
+                .setDescription(`<:cpu:998732645187997748> CPU | ${os.loadavg()[0]}%
+                <:memory:998732647847182366> Memory | ${Math.round((Math.abs(os.freemem() - os.totalmem())) / 1000000)} MB \`${Math.round((os.freemem() / os.totalmem()) * 100)}%\``)
+                .setColor('BLURPLE')
+
+            interaction.reply({
+                embeds: [embed]
+            })
+
+            break
+        }
+        case 'stop': {
+            embed.setTitle('Bot stopping.')
+                .setDescription('Stopping bot. It will restart shortly.')
+                .setColor('BLURPLE')
+
+            await interaction.reply({
+                embeds: [ embed ]
+            })
+
+            process.exit(0)
         }
     }
 }
