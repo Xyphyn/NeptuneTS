@@ -6,7 +6,7 @@ import { getConfig } from "../config/config.js"
 export const name = 'messageReactionAdd'
 export const once = false
 
-const browser = await puppeteer.launch({ })
+const browser = await puppeteer.launch({ args: ['--no-sandbox'] })
 
 const result = async (url) => {
     return new Promise(async (resolve, reject) => {
@@ -85,6 +85,7 @@ const languageNames = {
 export const execute = async (reaction) => {
     // if (!(getConfig(reaction.message.guild.id).translation.enabled)) return
     if (reaction.partial) await reaction.fetch()
+    await reaction.message.fetch()
 
     let content = reaction.message.content
     
