@@ -20,6 +20,7 @@ const result = async (url) => {
             return
         }
         let text = await page.evaluate(element => element.innerText, element)
+        page.close()
         resolve(text)
     })
 }
