@@ -46,7 +46,7 @@ export const execute = async (interaction) => {
         case 'resources': {
             embed.setTitle('<:system:998732644575621201> Resources')
                 .setDescription(`<:cpu:998732645187997748> CPU | ${os.loadavg()[0]}%
-                <:memory:998732647847182366> Memory | ${Math.round((Math.abs(os.freemem() - os.totalmem())) / 1000000)} MB \`${Math.round((os.freemem() / os.totalmem()) * 100)}%\``)
+                <:memory:998732647847182366> Memory | ${Math.round(process.memoryUsage().heapTotal / 1000000)} MB \`${Math.round((process.memoryUsage().heapTotal / 512000000) * 100)}%\``)
                 .setColor('#5865f2')
 
             interaction.reply({
