@@ -1,3 +1,4 @@
+import { PermissionsBitField } from "discord.js";
 import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import { config, saveState } from "../config/config.js";
 
@@ -16,7 +17,8 @@ export const data = new SlashCommandBuilder()
             .setDescription('The value to set the config value to.')
             .setRequired(true)))
 
-export const permissions = 'ADMINISTRATOR'
+export const permissions = PermissionsBitField.Flags.Administrator
+export const permissionsString = 'Administrator'
 
 function leaf(obj, path, value) {
     const pList = path.split('.');

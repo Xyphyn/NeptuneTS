@@ -20,10 +20,17 @@ export const data = new SlashCommandBuilder()
     )
 
 export const permissions = PermissionsBitField.Flags.SendMessages
+export const permissionsString = 'Send Messages'
 
 export const execute = async (interaction) => {
     if (!(interaction.user.id == 735626570399481878)) {
-        interaction.reply(`You... aren't the developer.`)
+        const embed = new EmbedBuilder()
+            .setTitle('Error')
+            .setDescription('<:WindowsShieldUAC:999005696483926017> This command is only available for developers.')
+            .setColor(0xff0000)
+        interaction.reply({
+            embeds: [embed]
+        })
         return
     }
 

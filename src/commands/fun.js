@@ -4,6 +4,7 @@ import { ActionRowBuilder, SlashCommandBuilder, ButtonBuilder, EmbedBuilder } fr
 import { v4 as uuid } from 'uuid';
 import { FetchError } from "node-fetch";
 import { ButtonStyle } from "discord.js";
+import { InteractionType } from "discord.js";
 
 export const data = new SlashCommandBuilder()
     .setName('fun')
@@ -76,7 +77,7 @@ export const execute = async (interaction) => {
             })
 
             const collector = interaction.channel.createMessageComponentCollector({
-                filter: (int) => { try { return int.message.id === message.id } catch (e) { return true }},
+                filter: async (int) => { try { const reply = await interaction.fetchReply(); return int.message.id === reply.id } catch (e) { return true }},
                 time: 30000
             })
 
@@ -90,7 +91,7 @@ export const execute = async (interaction) => {
                 embed
                     .setTitle(`${response}!`)
                     .setDescription(win ? `You won! 🥳` : `You lost! ☹️`)
-                    .setFooter({ text: '' })
+                    .setFooter({ text: null })
 
                 interaction.editReply({
                     embeds: [embed],
@@ -136,7 +137,7 @@ export const execute = async (interaction) => {
                 filter: async (int) => {
                     try {
                         const reply = await interaction.fetchReply()
-                        if ((int.message.id === reply.id) && int.isButton()) { if (!(int.user == interaction.user)) { 
+                        if ((int.message.id === reply.id) && int.type === InteractionType.MessageComponent) { if (!(int.user == interaction.user)) { 
                             int.reply({ content: 'Those buttons are not for you.', ephemeral: true }); return false } return true } 
                         else {
                             return false

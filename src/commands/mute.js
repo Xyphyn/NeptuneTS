@@ -3,6 +3,7 @@ import { config } from "../config/config.js"
 import ms from "ms"
 import { logEmbed } from "../managers/logManager.js"
 import { DiscordAPIError } from "discord.js"
+import { PermissionsBitField } from "discord.js"
 
 export const data = new SlashCommandBuilder()
     .setName("mute")
@@ -20,7 +21,8 @@ export const data = new SlashCommandBuilder()
         .setDescription('The duration of the timeout.')
         .setRequired(true))
 
-export const permissions = 'MANAGE_MESSAGES'
+export const permissions = PermissionsBitField.Flags.ModerateMembers
+export const permissionsString = 'Moderate Members'
 
 export const execute = async (interaction, client) => {
     const user = await interaction.options.getUser('user')

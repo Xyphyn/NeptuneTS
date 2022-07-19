@@ -1,3 +1,4 @@
+import { PermissionsBitField } from "discord.js"
 import { EmbedBuilder, SlashCommandBuilder } from "discord.js"
 import { config } from "../config/config.js"
 import { dbConfig } from "../database/dbConfig.js"
@@ -14,9 +15,9 @@ export const data = new SlashCommandBuilder()
         .setRequired(true))
 
 export const execute = async (interaction, client) => {
-    if (!interaction.member.permissions.has(Permissions.FLAGS.BAN_MEMBERS)) {
+    if (!interaction.member.permissions.has(PermissionsBitField.Flags.ModerateMembers)) {
         interaction.reply({
-            embeds: [ noPermission('BAN_MEMBERS') ]
+            embeds: [ noPermission('Moderate Members') ]
         })
         return
     }

@@ -1,3 +1,4 @@
+import { PermissionsBitField } from "discord.js";
 import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import ms from "ms";
 import { getConfig } from "../config/config.js";
@@ -15,7 +16,8 @@ export const data = new SlashCommandBuilder()
         )
     )
 
-export const permissions = 'MANAGE_CHANNELS'
+export const permissions = PermissionsBitField.Flags.ManageChannels
+export const permissionsString = 'Manage Channels'
 
 export const execute = async (interaction, client) => {
     const slowmode = Math.floor(ms(interaction.options.getString('slowmode')) / 1000) ?? 0

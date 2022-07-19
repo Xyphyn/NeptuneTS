@@ -1,3 +1,4 @@
+import { PermissionsBitField } from "discord.js"
 import { SlashCommandBuilder } from "discord.js"
 
 export const data = new SlashCommandBuilder()
@@ -8,7 +9,8 @@ export const data = new SlashCommandBuilder()
         .setDescription('The user to timeout.')
         .setRequired(true))
 
-export const permissions = 'MANAGE_MESSAGES'
+export const permissions = PermissionsBitField.Flags.ModerateMembers
+export const permissionsString = 'Moderate Members'
 
 export const execute = async (interaction, client) => {
     const user = await interaction.options.getUser('user')

@@ -18,8 +18,8 @@ export const execute = async (message) => {
             name: message.author.username,
             iconURL: message.author.displayAvatarURL()
         },
-        color: embedSettings.color,
-        timestamp: new Date()
+        color: 0x0099ff,
+        timestamp: new Date().getTime()
     })
 
     if (loggingConfig.logDirectMessages) {

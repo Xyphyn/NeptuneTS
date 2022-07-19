@@ -21,7 +21,8 @@ export const data = new SlashCommandBuilder()
         .setDescription('The reason for the warning.')
         .setRequired(false))
 
-export const permissions = 'SEND_MESSAGES'
+export const permissions = PermissionsBitField.Flags.SendMessages
+export const permissionsString = 'Send Messages'
 
 export const execute = async (interaction, client) => {
 

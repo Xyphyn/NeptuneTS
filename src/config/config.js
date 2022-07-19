@@ -1,6 +1,4 @@
-import { EmbedBuilder } from "discord.js";
-import { deleteAllInDatabase, deleteFromDatabase, findInDatabase, insertToDatabase, updateInDatabase } from "../database/mongodb.js";
-import { baseConfig } from "./baseConfig.js";
+import { deleteAllInDatabase, findInDatabase, insertToDatabase } from "../database/mongodb.js";
 
 export const saveState = async () => {
     return new Promise(async (resolve, reject) => {

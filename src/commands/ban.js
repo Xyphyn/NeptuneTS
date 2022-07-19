@@ -1,3 +1,5 @@
+import { PermissionsBitField } from "discord.js"
+import { PermissionFlagsBits } from "discord.js"
 import { EmbedBuilder, SlashCommandBuilder } from "discord.js"
 import { config, getConfig } from '../config/config.js'
 import { logEmbed } from "../managers/logManager.js"
@@ -14,7 +16,8 @@ export const data = new SlashCommandBuilder()
         .setDescription('The reason for the ban.')
         .setRequired(true))
 
-export const permissions = 'BAN_MEMBERS'
+export const permissions = PermissionFlagsBits.BanMembers
+export const permissionsString = 'Ban Members'
 
 export const execute = async (interaction, client) => {
     const user = interaction.options.getUser('user')

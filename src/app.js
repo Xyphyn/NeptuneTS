@@ -13,16 +13,21 @@ import { setLoggingClient } from './managers/logManager.js'
 import { config } from './config/config.js'
 import { noPermission } from './managers/errorManager.js'
 import { MessageCollector } from 'discord.js'
+import { PermissionsBitField } from 'discord.js'
+import { PermissionFlagsBits } from 'discord.js'
 
 await dotenv_config()
 
-export const client = new Client({ partials: [ Partials.Channel, Partials.Message, Partials.Reaction ], intents: [ GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildBans, GatewayIntentBits.GuildEmojisAndStickers, GatewayIntentBits.GuildPresences, GatewayIntentBits.DirectMessages, GatewayIntentBits.GuildMessageReactions ] },)
+export const client = new Client({ partials: [ Partials.Channel, Partials.Message, Partials.Reaction ], intents: [ GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildBans, GatewayIntentBits.GuildEmojisAndStickers, GatewayIntentBits.GuildPresences, GatewayIntentBits.DirectMessages, GatewayIntentBits.GuildMessageReactions, GatewayIntentBits.DirectMessageReactions ] },)
 
 client.commands = new Collection()
 const commandFiles = fs.readdirSync('./src/commands').filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
-	const command = import(`./commands/${file}`).then(command => { client.commands.set(command.data.name, command) })
+	const command = import(`./commands/${file}`)
+        .then(module => {
+            client.commands.set(module.data.name, module)
+        })
 }
 
 const eventFiles = fs.readdirSync('./src/events').filter(file => file.endsWith('.js'));
@@ -70,9 +75,9 @@ client.on('interactionCreate', async interaction => {
 	const command = client.commands.get(interaction.commandName);
 
 	if (!command) return;
-    const perm = command.permissions ?? 'SEND_MESSAGES'
+    const perm = command.permissions ?? PermissionFlagsBits.SendMessages
     if (!(interaction.member.permissions.has(perm))) {
-        await interaction.reply({ embeds: [ noPermission(perm) ] });
+        await interaction.reply({ embeds: [ noPermission(command.permissionsString) ] });
         return;
     }
 

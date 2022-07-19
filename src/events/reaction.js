@@ -8,7 +8,7 @@ export const once = false
 
 const browser = await puppeteer.launch({ args: ['--no-sandbox'] })
 
-const result = async (url) => {
+export const getTranslation = async (url) => {
     return new Promise(async (resolve, reject) => {
         const page = await browser.newPage()
         await page.goto(`${url}`)
@@ -33,13 +33,15 @@ const translate = async (lang, reaction, content) => {
     const embed = new EmbedBuilder()
         .setTitle('Translation')
         .setDescription(`<a:WindowsLoading:998707398267130028> Translating to **${languageName}**...`)
-        .setColor(getConfig(reaction.message.guild.id).embedSettings.color)
+
+    if (reaction.message.guild != undefined) embed.setColor(getConfig(reaction.message.guild.id).embedSettings.color)
+    else embed.setColor(0x0099ff)
 
     const msg = await reaction.message.reply({
         embeds: [ embed ]
     })
 
-    const translation = await result(`https://translate.google.com/?sl=auto&tl=${language}&text=${encodeURIComponent(content)}&op=translate`)
+    const translation = await getTranslation(`https://translate.google.com/?sl=auto&tl=${language}&text=${encodeURIComponent(content)}&op=translate`)
 
     embed.setDescription(`${translation}`).setFooter({ text: `Translated to ${flag} ${languageName}` }).setAuthor({ name: reaction.message.author.username, iconURL: reaction.message.author.avatarURL() })
 
@@ -65,7 +67,7 @@ const languages = {
     '🇬🇷': 'el',
 }
 
-const languageNames = {
+export const languageNames = {
     'en': 'English',
     'es': 'Spanish',
     'fr': 'French',
@@ -96,7 +98,9 @@ export const execute = async (reaction) => {
         if (embedData.description == undefined || embedData.description == '') return
 
         content = embedData.description
-    } 
+    } else {
+        if (reaction.message.content == '') return
+    }
 
     if (reaction.emoji.name in languages) {
         translate(languages[reaction.emoji.name], reaction, content)
