@@ -1,6 +1,7 @@
 import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import { loadState } from "../config/config.js";
 import os from 'os'
+import { PermissionsBitField } from "discord.js";
 
 export const data = new SlashCommandBuilder()
     .setName('dev')
@@ -18,7 +19,7 @@ export const data = new SlashCommandBuilder()
         .setDescription('Stops the bot.')
     )
 
-export const permissions = 'SEND_MESSAGES'
+export const permissions = PermissionsBitField.Flags.SendMessages
 
 export const execute = async (interaction) => {
     if (!(interaction.user.id == 735626570399481878)) {
