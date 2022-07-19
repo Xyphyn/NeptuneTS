@@ -1,6 +1,4 @@
-import { SlashCommandBuilder } from "@discordjs/builders"
-import { Permissions } from "discord.js"
-import { MessageEmbed } from "discord.js"
+import { EmbedBuilder, SlashCommandBuilder } from "discord.js"
 import { config } from "../config/config.js"
 import { dbConfig } from "../database/dbConfig.js"
 import { deleteFromDatabase } from "../database/mongodb.js"
@@ -25,8 +23,8 @@ export const execute = async (interaction, client) => {
     
     const uuid = await interaction.options.getString('uuid')
     deleteFromDatabase(dbConfig.warningCollection, { id: uuid })
-    const embed = new MessageEmbed().setColor(config[interaction.guild.id].embedSettings.errorColor).addField('Warning deleted', `${uuid}`,true).addField('Moderator', `<@${interaction.user.id}>`, true)
-    const embed2 = new MessageEmbed().setColor(config[interaction.guild.id].embedSettings.errorColor).setTitle('Warning deleted').setDescription(`<:WindowsRecycleBin:824380487920910348> Warning of UUID \`${uuid}\` has been deleted.`)
+    const embed = new EmbedBuilder().setColor(config[interaction.guild.id].embedSettings.errorColor).addFields([{name: 'Warning deleted', value: `${uuid}`, inline: true},{name: 'Moderator', value: `<@${interaction.user.id}>`, inline: true}])
+    const embed2 = new EmbedBuilder().setColor(config[interaction.guild.id].embedSettings.errorColor).setTitle('Warning deleted').setDescription(`<:WindowsRecycleBin:824380487920910348> Warning of UUID \`${uuid}\` has been deleted.`)
 
     logEmbed(embed2, interaction.guild)
     await interaction.reply({

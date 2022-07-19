@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js"
+import { EmbedBuilder } from "discord.js"
 import fetch from "node-fetch"
 import puppeteer from "puppeteer"
 import { getConfig } from "../config/config.js"
@@ -23,7 +23,7 @@ const translate = async (lang, reaction) => {
     const language = languages[flag]
     const languageName = languageNames[language]
 
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
         .setTitle('Translation')
         .setDescription(`<a:WindowsLoading:998707398267130028> Translating to **${languageName}**...`)
         .setColor(getConfig(reaction.message.guild.id).embedSettings.color)
@@ -59,8 +59,10 @@ const languageNames = {
 }
 
 export const execute = async (reaction) => {
-    if (reaction.message.author.bot) return 
     // if (!(getConfig(reaction.message.guild.id).translation.enabled)) return
+    if (reaction.partial) await reaction.fetch()
+    
+    if (reaction.message.author.bot) return 
 
     if (reaction.emoji.name in languages) {
         translate(languages[reaction.emoji.name], reaction)

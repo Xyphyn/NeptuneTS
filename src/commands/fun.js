@@ -1,14 +1,9 @@
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { MessageEmbed } from "discord.js";
 import { config, getConfig } from "../config/config.js";
 import fetch from 'node-fetch'
-import { MessageActionRow } from "discord.js";
-import { MessageButton } from "discord.js";
-import { Collector } from "discord.js";
+import { ActionRowBuilder, SlashCommandBuilder, ButtonBuilder, EmbedBuilder } from "discord.js";
 import { v4 as uuid } from 'uuid';
-import { ButtonInteraction } from "discord.js";
-import { MessageComponentInteraction } from "discord.js";
 import { FetchError } from "node-fetch";
+import { ButtonStyle } from "discord.js";
 
 export const data = new SlashCommandBuilder()
     .setName('fun')
@@ -45,7 +40,7 @@ export const execute = async (interaction) => {
             await interaction.deferReply()
             const res = await fetch('https://uselessfacts.jsph.pl/random.json?language=en')
             const json = await res.json()
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setTitle('Useless Fact')
                 .setDescription(`${json.text} ${['🤔', '🤯', '😮'][Math.floor(3 * Math.random())]}`)
                 .setURL(json.source_url)
@@ -58,22 +53,22 @@ export const execute = async (interaction) => {
             break
         }
         case 'coinflip': {
-            const row = new MessageActionRow()
+            const row = new ActionRowBuilder()
                 .addComponents(
-                    new MessageButton()
+                    new ButtonBuilder()
                         .setCustomId('coinflip-heads')
                         .setLabel('Heads 👨')
-                        .setStyle('SECONDARY'),
-                    new MessageButton()
+                        .setStyle(ButtonStyle.Secondary),
+                    new ButtonBuilder()
                         .setCustomId('coinflip-tails')
                         .setLabel('Tails 🐒')
-                        .setStyle('SECONDARY')
+                        .setStyle(ButtonStyle.Secondary)
                 )
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setTitle('Heads or tails?')
                 .setDescription(`The decision is yours. Choose wisely.`)
                 .setFooter({ text: 'You have 30 seconds to decide.' })
-                .setColor(config[interaction.guild.id].embedSettings.color)
+                .setColor(getConfig(interaction).embedSettings.color)
 
             const message = await interaction.reply({
                 embeds: [embed],
@@ -111,12 +106,12 @@ export const execute = async (interaction) => {
             const message = await interaction.deferReply()
             const animated = interaction.options.getBoolean('animated')
             const id = uuid()
-            const row = new MessageActionRow()
+            const row = new ActionRowBuilder()
                 .addComponents(
-                    new MessageButton()
+                    new ButtonBuilder()
                         .setCustomId(id)
                         .setLabel('Another! 🔄️')
-                        .setStyle('SECONDARY')
+                        .setStyle(ButtonStyle.Secondary)
                 )
 
             const getCat = async () => {
@@ -124,7 +119,7 @@ export const execute = async (interaction) => {
                 const res = await fetch(url)
                 const json = await res.json()
 
-                const embed = new MessageEmbed()
+                const embed = new EmbedBuilder()
                     .setTitle(`Meow ${['😺', '😸', '😹', '😻'][Math.floor(4 * Math.random())]}`)
                     .setImage(animated ? json[0].url : `https://cataas.com${json.url}`)
                     .setColor('#2F3136')
@@ -175,16 +170,16 @@ export const execute = async (interaction) => {
             const nextId = 'reddit-next'
             const prevId = 'reddit-prev'
             let index = -1
-            const row = new MessageActionRow()
+            const row = new ActionRowBuilder()
                 .addComponents(
-                    new MessageButton()
+                    new ButtonBuilder()
                         .setCustomId('reddit-next')
                         .setLabel('Next')
-                        .setStyle('SECONDARY'),
-                    new MessageButton()
+                        .setStyle(ButtonStyle.Secondary),
+                    new ButtonBuilder()
                         .setCustomId('reddit-prev')
                         .setLabel('Previous')
-                        .setStyle('SECONDARY')
+                        .setStyle(ButtonStyle.Secondary)
                 )
 
             const refresh = async (index) => {
@@ -210,10 +205,10 @@ export const execute = async (interaction) => {
 
                 if (post.data.thumbnail == 'nsfw' || post.data.stickied || post.data.pinned) { update(next); return }
 
-                const embed = new MessageEmbed()
+                const embed = new EmbedBuilder()
                     .setTitle(post.data.title)
                     .setImage(post.data.url)
-                    .setDescription(post.data.selftext)
+                    .setDescription(post.data.selftext.length >= 1 ? post.data.selftext : null)
                     .setURL(`https://reddit.com${post.data.permalink}`)
                     .setFooter({ text: `👍 ${post.data.ups} 💬 ${post.data.num_comments}` })
                     .setColor(getConfig(interaction).embedSettings.color)
@@ -243,17 +238,17 @@ export const execute = async (interaction) => {
             const disable = (next, prev) => {
                 // clear collector if nothing collected within 1 minute
                 if (next && prev) collector.stop()
-                const row = new MessageActionRow()
+                const row = new ActionRowBuilder()
                     .addComponents(
-                        new MessageButton()
+                        new ButtonBuilder()
                             .setCustomId('reddit-next')
                             .setLabel('Next')
-                            .setStyle('SECONDARY')
+                            .setStyle(ButtonStyle.Secondary)
                             .setDisabled(next),
-                        new MessageButton()
+                        new ButtonBuilder()
                             .setCustomId('reddit-prev')
                             .setLabel('Previous')
-                            .setStyle('SECONDARY')
+                            .setStyle(ButtonStyle.Secondary)
                             .setDisabled(prev)
                     )
                 

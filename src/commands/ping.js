@@ -1,5 +1,4 @@
-import { SlashCommandBuilder } from "@discordjs/builders"
-import { MessageActionRow, MessageButton, MessageEmbed } from "discord.js"
+import { EmbedBuilder, SlashCommandBuilder } from "discord.js"
 import { config } from "../config/config.js"
 
 export const data = new SlashCommandBuilder()
@@ -7,7 +6,7 @@ export const data = new SlashCommandBuilder()
     .setDescription("Returns Discord API Ping")
 
 export const execute = async (interaction, client) => {
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
     .setTitle("Discord latency")
     .setDescription(`<:wifi:962042152387477535> ${client.ws.ping}ms`)
     .setColor(config[interaction.guild.id].embedSettings.color)

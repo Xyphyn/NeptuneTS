@@ -1,10 +1,8 @@
-import { SlashCommandBuilder } from "@discordjs/builders"
-import { MessageActionRow, MessageButton, MessageEmbed } from "discord.js"
+import { EmbedBuilder, SlashCommandBuilder } from "discord.js"
 import { config } from "../config/config.js"
 import ms from "ms"
 import { logEmbed } from "../managers/logManager.js"
-import { Permissions } from "discord.js"
-import { emojiSettings } from "../config/emojis.js"
+import { DiscordAPIError } from "discord.js"
 
 export const data = new SlashCommandBuilder()
     .setName("mute")
@@ -30,10 +28,12 @@ export const execute = async (interaction, client) => {
     const duration = await interaction.options.getString('duration')
     const moderator = await interaction.user.id
 
-    const embed = new MessageEmbed().setColor(config[interaction.guild.id].embedSettings.errorColor).setAuthor({ name: user.username, iconURL: user.displayAvatarURL() }).setDescription('Timeout').addField('Offending User', `<@${user.id}>`, true).addField('Moderator', `<@${moderator}>`, true).addField('Reason', reason ?? 'No reason specified.', true)
+    const embed = new EmbedBuilder().setColor(config[interaction.guild.id].embedSettings.errorColor).setAuthor({ name: user.username, iconURL: user.displayAvatarURL() }).setDescription('Timeout').addFields([{name: 'Offending User', value: `<@${user.id}>`, inline: true},{name: 'Moderator', value: `<@${moderator}>`, inline: true},{name: 'Reason', value: reason ?? 'No reason specified.', inline: true}])
 
     const time = ms(duration) ?? ms('1h')
-    interaction.guild.members.cache.get(user.id).timeout(time)
+
+    const member = await interaction.guild.members.cache.get(user.id)
+    await member.timeout(time)
 
     logEmbed(embed, interaction.guild)
 

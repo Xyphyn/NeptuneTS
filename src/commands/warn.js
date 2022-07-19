@@ -1,17 +1,13 @@
-import { SlashCommandBuilder } from "@discordjs/builders"
-import { Permissions } from "discord.js"
+import { SlashCommandBuilder, EmbedBuilder } from "discord.js"
 import { dbConfig } from "../database/dbConfig.js"
-import { deleteFromDatabase, insertToDatabase } from "../database/mongodb.js"
+import { insertToDatabase } from "../database/mongodb.js"
 import { v4 as uuid } from 'uuid'
-import { loggingConfig } from "../config/logging.js"
-import { MessageEmbed } from "discord.js"
-import { embedSettings } from "../config/embeds.js"
 import { decidePunishment } from "../managers/punishmentManager.js"
 import { logEmbed } from "../managers/logManager.js"
-import { emojiSettings } from "../config/emojis.js"
 import { config, getConfig } from "../config/config.js"
 import { noPermission } from "../managers/errorManager.js"
 import { delay } from "../managers/util.js"
+import { PermissionsBitField } from "discord.js"
 
 export const data = new SlashCommandBuilder()
     .setName("warn")
@@ -32,9 +28,9 @@ export const execute = async (interaction, client) => {
     const user = await interaction.options.getUser('user')
     const guild = await interaction.guild.id
 
-    if (!interaction.member.permissions.has(Permissions.FLAGS.BAN_MEMBERS)) {
+    if (!interaction.member.permissions.has(PermissionsBitField.Flags.ModerateMembers)) {
         interaction.reply({
-            embeds: [ noPermission('BAN_MEMBERS') ]
+            embeds: [ noPermission('ModerateMembers') ]
         })
         return
     }
@@ -93,9 +89,9 @@ export const execute = async (interaction, client) => {
 
     insertToDatabase(dbConfig.warningCollection, data)
 
-    const embed = new MessageEmbed().setColor(config[interaction.guild.id].embedSettings.color).setAuthor({ name: user.username, iconURL: user.displayAvatarURL() }).addField('Offending User', `<@${user.id}>`, true).addField('Moderator', `<@${moderator}>`, true).addField('Reason', reason ?? 'No reason specified.', true).setFooter({ text: `${data.id}` })
+    const embed = new EmbedBuilder().setColor(config[interaction.guild.id].embedSettings.color).setAuthor({ name: user.username, iconURL: user.displayAvatarURL() }).addFields([{name: 'Offending User', value: `<@${user.id}>`, inline: true},{ name: 'Moderator', value: `<@${moderator}>`, inline: true },{name: 'Reason', value: reason ?? 'No reason specified.', inline: true}]).setFooter({ text: `${data.id}` })
 
-    await logEmbed(embed, interaction.guild)
+    logEmbed(embed, interaction.guild)
 
     if (!(interaction.replied)) {
         await interaction.reply({

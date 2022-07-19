@@ -1,5 +1,4 @@
-import { SlashCommandBuilder } from "@discordjs/builders"
-import { MessageEmbed } from "discord.js"
+import { EmbedBuilder, SlashCommandBuilder } from "discord.js"
 import { config, getConfig } from "../config/config.js"
 
 export const data = new SlashCommandBuilder()
@@ -70,7 +69,7 @@ export const execute = async (interaction, client) => {
             const colorCheck = interaction.options.getString('color') ?? ''
             const color = colorCheck.match(hexRegex) ? colorCheck : config[interaction.guild.id].embedSettings.color
 
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setTitle(title)
                 .setDescription(description)
                 .setColor(color)
@@ -83,7 +82,7 @@ export const execute = async (interaction, client) => {
         }
         case 'epoch': {
             const epoch = Math.floor(Date.now() / 1000)
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setTitle(`Timestamp: \`${epoch}\``)
                 .setDescription(`<t:${epoch}>`)
                 .setColor('#2F3136')
@@ -105,7 +104,7 @@ export const execute = async (interaction, client) => {
                 type: type
             }
 
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setTitle(`Status set`)
                 .setDescription(`<:WindowsSuccess:977721596468928533> Status was set to \`${type} ${message}\``)
                 .setColor(`${getConfig(interaction).embedSettings.color}`)

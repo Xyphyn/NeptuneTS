@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 
 export let baseConfig = {
     embedSettings: {
@@ -13,7 +13,7 @@ export let baseConfig = {
         success: '<:WindowsSuccess:977721596468928533>'
     },
     errorSettings: {
-        "no-permission": new MessageEmbed().setTitle('Error').setColor('RED').setDescription(`<:WindowsCritical:824380490051747840> You do not have permission to use this command.`),
+        "no-permission": new EmbedBuilder().setTitle('Error').setColor('#ff0a0a').setDescription(`<:WindowsCritical:824380490051747840> You do not have permission to use this command.`),
     },
     logging: {
         loggingChannel: '977253966851227730',

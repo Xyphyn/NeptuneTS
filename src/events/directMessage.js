@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { embedSettings } from "../config/embeds.js";
 import { loggingConfig } from "../config/logging.js";
 import { client } from '../app.js'
@@ -11,7 +11,7 @@ export const execute = async (message) => {
 
     if (!(message.guild == null)) return
 
-    const embed = new MessageEmbed({
+    const embed = new EmbedBuilder({
         title: 'Direct Message',
         description: `${message.content}`,
         author: {

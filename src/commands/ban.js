@@ -1,9 +1,6 @@
-import { SlashCommandBuilder } from "@discordjs/builders"
-import { MessageActionRow, MessageButton, MessageEmbed } from "discord.js"
-import { config } from '../config/config.js'
-import ms from "ms"
+import { EmbedBuilder, SlashCommandBuilder } from "discord.js"
+import { config, getConfig } from '../config/config.js'
 import { logEmbed } from "../managers/logManager.js"
-import { Permissions } from "discord.js"
 
 export const data = new SlashCommandBuilder()
     .setName("ban")
@@ -20,19 +17,22 @@ export const data = new SlashCommandBuilder()
 export const permissions = 'BAN_MEMBERS'
 
 export const execute = async (interaction, client) => {
-    const user = await interaction.options.getUser('user')
+    const user = interaction.options.getUser('user')
     const guildMember = await interaction.guild.members.fetch(user.id)
-    const reason = await interaction.options.getString('reason')
-    const moderator = await interaction.user.id
+    const reason = interaction.options.getString('reason')
+    const moderator = interaction.user.id
 
-    const embed = new MessageEmbed().setColor(config[interaction.guild.id].embedSettings.embedColor).setAuthor({ name: user.username, iconURL: user.displayAvatarURL() }).setDescription('Ban').addField('Offending User', `<@${user.id}>`, true).addField('Moderator', `<@${moderator}>`, true).addField('Reason', reason ?? 'No reason specified.', true)
+    const embed = new EmbedBuilder().setColor(getConfig(interaction).embedSettings.color).setAuthor({ name: user.username, iconURL: user.avatarURL() }).setDescription('Ban')
+    .addFields([ { name: 'Offending User', value: `<@${user.id}>`, inline: true },
+    { name: 'Moderator', value: `<@${moderator}>`, inline: true },
+    { name: 'Reason', value: reason ?? 'No reason specified.', inline: true } ])
 
     if (guildMember.bannable) {
         guildMember.ban({
-            days: 0, reason: reason ?? 'No reason specified.'
+            deleteMessageDays: 0, reason: reason ?? 'No reason specified.'
         })
     } else {
-        const embed2 = new MessageEmbed().setColor(config[interaction.guild.id].embedSettings.errorColor).setTitle('Ban failed').setDescription(`<:WindowsCritical:824380490051747840> Failed to ban <@${user.id}>. You sure they can be banned?`)
+        const embed2 = new EmbedBuilder().setColor(getConfig(interaction).embedSettings.errorColor).setTitle('Ban failed').setDescription(`<:WindowsCritical:824380490051747840> Failed to ban <@${user.id}>. They probably are an admin/moderator.`)
         await interaction.reply({
             embeds: [ embed2 ]
         })
@@ -42,6 +42,6 @@ export const execute = async (interaction, client) => {
     logEmbed(embed, interaction.guild)
 
     await interaction.reply({
-        content: `${config[interaction.guild.id].emojiSettings.ban} <@${user.id}> has been banned. **${interaction.options.getString('reason') ?? 'No reason specified.'}**`,
+        content: `${getConfig(interaction).emojiSettings.ban} <@${user.id}> has been banned. **${interaction.options.getString('reason') ?? 'No reason specified.'}**`,
     })
 }

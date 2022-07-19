@@ -1,8 +1,5 @@
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { Permissions } from "discord.js";
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import { config } from "../config/config.js";
-import { embedSettings } from "../config/embeds.js";
 import { dbConfig } from "../database/dbConfig.js";
 import { findInDatabase } from "../database/mongodb.js";
 
@@ -47,7 +44,7 @@ export const execute = async (interaction, client) => {
         color = config[interaction.guild.id].embedSettings.successColor
     }
 
-    const embed = new MessageEmbed().setColor(color).setAuthor({ name: user.username, iconURL: user.displayAvatarURL() }).setTitle('Warnings').setDescription(warningString)
+    const embed = new EmbedBuilder().setColor(color).setAuthor({ name: user.username, iconURL: user.displayAvatarURL() }).setTitle('Warnings').setDescription(warningString)
 
     await interaction.editReply({
         embeds: [embed],

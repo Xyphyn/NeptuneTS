@@ -1,6 +1,4 @@
-import { SlashCommandBuilder } from "@discordjs/builders"
-import { MessageEmbed } from "discord.js";
-import { Permissions } from "discord.js"
+import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import { config, saveState } from "../config/config.js";
 
 export const data = new SlashCommandBuilder()
@@ -34,7 +32,7 @@ function leaf(obj, path, value) {
 }
 
 export const execute = async (interaction, client) => {
-    const embed = new MessageEmbed().setTitle("Setting configs....")
+    const embed = new EmbedBuilder().setTitle("Setting configs....")
     .setDescription(`<a:WindowsLoading:883414701218873376> Setting configs...`).setColor(config[interaction.guild.id].embedSettings.color)
     if (interaction.options.getSubcommand() === 'set') {
         await interaction.reply({

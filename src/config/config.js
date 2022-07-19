@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { deleteAllInDatabase, deleteFromDatabase, findInDatabase, insertToDatabase, updateInDatabase } from "../database/mongodb.js";
 import { baseConfig } from "./baseConfig.js";
 

@@ -1,5 +1,4 @@
-import { SlashCommandBuilder } from "@discordjs/builders"
-import { Permissions } from "discord.js"
+import { SlashCommandBuilder } from "discord.js"
 
 export const data = new SlashCommandBuilder()
     .setName("unmute")
@@ -14,7 +13,8 @@ export const permissions = 'MANAGE_MESSAGES'
 export const execute = async (interaction, client) => {
     const user = await interaction.options.getUser('user')
 
-    interaction.guild.members.cache.get(user.id).timeout(null)
+    const member = await interaction.guild.members.cache.get(user.id)
+    await member.timeout(null)
 
     await interaction.reply({
         content: `<:WindowsSuccess:824380489712140359> <@${interaction.options.getUser('user').id}> has been unmuted.`

@@ -2,24 +2,21 @@ import { createSpinner } from 'nanospinner'
 
 const spinner = createSpinner(chalk.yellow(`Starting bot...`)).start()
 
-import { Client, Collection, Intents, MessageEmbed } from 'discord.js'
+import { Client, Collection, GatewayIntentBits, EmbedBuilder, Partials } from 'discord.js'
 import chalk from 'chalk'
 import { config as dotenv_config } from 'dotenv'
 import fs from 'fs'
 import { embedSettings } from './config/embeds.js'
-import { errorSettings } from './config/errors.js'
 import { deploy } from './deploy-commands.js'
 import { connectToDatabase, db, refreshGuilds } from './database/mongodb.js'
 import { setLoggingClient } from './managers/logManager.js'
-import { loadState, saveState, config } from './config/config.js'
-import { baseConfig } from './config/baseConfig.js'
+import { config } from './config/config.js'
 import { noPermission } from './managers/errorManager.js'
-import { Permissions } from 'discord.js'
 import { MessageCollector } from 'discord.js'
 
 await dotenv_config()
 
-export const client = new Client({ partials: ["CHANNEL"], intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_BANS, Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS, Intents.FLAGS.GUILD_PRESENCES, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS] },)
+export const client = new Client({ partials: [ Partials.Channel, Partials.Message, Partials.Reaction ], intents: [ GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildBans, GatewayIntentBits.GuildEmojisAndStickers, GatewayIntentBits.GuildPresences, GatewayIntentBits.DirectMessages, GatewayIntentBits.GuildMessageReactions ] },)
 
 client.commands = new Collection()
 const commandFiles = fs.readdirSync('./src/commands').filter(file => file.endsWith('.js'));
@@ -63,6 +60,12 @@ client.on('guildCreate', async () => {
     await deploy()
 })
 
+client.on('error', async (err) => {
+    const user = await client.users.fetch('735626570399481878')
+    user.send(`An error occurred! \`${err}\``)
+    console.log(err)
+})
+
 client.on('interactionCreate', async interaction => {
 	const command = client.commands.get(interaction.commandName);
 
@@ -77,23 +80,24 @@ client.on('interactionCreate', async interaction => {
 		await command.execute(interaction, client);
 	} catch (error) {
         // Error handler
+        console.log(error)
 
         const causes = {
             'Missing Permissions': 'The user is probably not able to be punished.',
             'Unexpected token < in JSON at position 0': 'You might have input an invalid/inactive subreddit.',
-            'Subreddit not found.': 'That subreddit does not exist.'
+            'Subreddit not found.': 'That subreddit does not exist.',
+            'Received one or more errors': 'That user can\'t be banned.'
         }
-        const stack = error.stack
+        const stack = error.message
 
-        const embed = new MessageEmbed().setColor(embedSettings.errorColor)
+        const embed = new EmbedBuilder().setColor(embedSettings.errorColor)
         .setTitle('Error')
         .setDescription(`<:BSOD:984972563358814228> \`${error.name}\` occured during execution!`)
-        .addField('Message', error.message)
-        
+
         if (causes[error.message]) {
-            embed.addField('Likely Cause', causes[error.message])
+            embed.addFields([{ name: 'Likely Cause', value: causes[error.message] }])
         } else {
-            embed.addField('Stack', `${stack.split("\n")[4] ?? 'No stack trace available'}`)
+            embed.addFields([{ name: 'Message', value: error.message }, { name: 'Stack', value: stack }])
         }
 
         try {
@@ -101,7 +105,7 @@ client.on('interactionCreate', async interaction => {
             const collector = new MessageCollector(interaction.channel, m => m.author.id === interaction.author.id, { time: 5000 });
             collector.on('collect', message => {
                 if (message.content === 'stack pls') {
-                    const stackEmbed = new MessageEmbed().setColor(embedSettings.errorColor)
+                    const stackEmbed = new EmbedBuilder().setColor(embedSettings.errorColor)
                         .setTitle('Full Stack')
                         .setDescription(`\`\`\`js${stack}\`\`\``)
                     message.channel.send({ embeds: [ stackEmbed ] })
@@ -115,7 +119,7 @@ client.on('interactionCreate', async interaction => {
                 const collector = new MessageCollector(interaction.channel, m => m.author.id === interaction.author.id, { time: 5000 });
                 collector.on('collect', message => {
                     if (message.content === 'stack pls') {
-                        const stackEmbed = new MessageEmbed().setColor(embedSettings.errorColor)
+                        const stackEmbed = new EmbedBuilder().setColor(embedSettings.errorColor)
                             .setTitle('Full Stack')
                             .setDescription(`\`\`\`js${stack}\`\`\``)
                         message.channel.send({ embeds: [ stackEmbed ] })
@@ -127,7 +131,7 @@ client.on('interactionCreate', async interaction => {
                 const collector = new MessageCollector(interaction.channel, m => m.author.id === interaction.author.id, { time: 5000 });
                 collector.on('collect', message => {
                     if (message.content === 'stack pls') {
-                        const stackEmbed = new MessageEmbed().setColor(embedSettings.errorColor)
+                        const stackEmbed = new EmbedBuilder().setColor(embedSettings.errorColor)
                             .setTitle('Full Stack')
                             .setDescription(`\`\`\`js${stack}\`\`\``)
                         message.channel.send({ embeds: [ stackEmbed ] })
