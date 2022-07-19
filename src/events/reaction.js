@@ -6,13 +6,19 @@ import { getConfig } from "../config/config.js"
 export const name = 'messageReactionAdd'
 export const once = false
 
-const browser = await puppeteer.launch({ args: [ '--no-sandbox' ] })
-const page = await browser.newPage()
+const browser = await puppeteer.launch({ })
 
 const result = async (url) => {
     return new Promise(async (resolve, reject) => {
+        const page = await browser.newPage()
         await page.goto(`${url}`)
-        let element = await page.waitForSelector('#yDmH0d > c-wiz > div > div.WFnNle > c-wiz > div.OlSOob > c-wiz > div.ccvoYb.EjH7wc > div.AxqVh > div.OPPzxe > c-wiz.P6w8m.BDJ8fb > div.dePhmb > div > div.J0lOec > span.VIiyi')
+        let element
+        try {
+            element = await page.waitForSelector('#yDmH0d > c-wiz > div > div.WFnNle > c-wiz > div.OlSOob > c-wiz > div.ccvoYb.EjH7wc > div.AxqVh > div.OPPzxe > c-wiz.P6w8m.BDJ8fb > div.dePhmb > div > div.J0lOec > span.VIiyi')
+        } catch (e) {
+            resolve('Error getting translation')
+            return
+        }
         let text = await page.evaluate(element => element.innerText, element)
         resolve(text)
     })
@@ -82,7 +88,7 @@ export const execute = async (reaction) => {
 
     let content = reaction.message.content
     
-    if (content == '') {
+    if (reaction.message.embeds[0] != undefined) {
         // It's an embed.
         const embedData = reaction.message.embeds[0]
         if (embedData.description == undefined || embedData.description == '') return
