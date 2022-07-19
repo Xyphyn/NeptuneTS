@@ -18,7 +18,7 @@ const result = async (url) => {
     })
 }
 
-const translate = async (lang, reaction) => {
+const translate = async (lang, reaction, content) => {
     const flag = reaction.emoji.name
     const language = languages[flag]
     const languageName = languageNames[language]
@@ -32,7 +32,7 @@ const translate = async (lang, reaction) => {
         embeds: [ embed ]
     })
 
-    const translation = await result(`https://translate.google.com/?sl=auto&tl=${language}&text=${encodeURIComponent(reaction.message.content)}&op=translate`)
+    const translation = await result(`https://translate.google.com/?sl=auto&tl=${language}&text=${encodeURIComponent(content)}&op=translate`)
 
     embed.setDescription(`${translation}`).setFooter({ text: `Translated to ${flag} ${languageName}` }).setAuthor({ name: reaction.message.author.username, iconURL: reaction.message.author.avatarURL() })
 
@@ -46,7 +46,16 @@ const languages = {
     '🇫🇷': 'fr',
     '🇷🇺': 'ru',
     '🇨🇳': 'zh-CN',
-    '🇯🇵': 'ja'
+    '🇯🇵': 'ja',
+    '🇮🇳': 'in',
+    '🇵🇱': 'pl',
+    '🇺🇦': 'uk',
+    '🇮🇹': 'it',
+    '🇩🇪': 'de',
+    '🇮🇱': 'iw',
+    '🇸🇻': 'sv',
+    '🇰🇷': 'ko',
+    '🇬🇷': 'el',
 }
 
 const languageNames = {
@@ -56,15 +65,32 @@ const languageNames = {
     'ru': 'Russian',
     'zh-CN': 'Chinese',
     'ja': 'Japanese',
+    'in': 'Hindi',
+    'pl': 'Polish',
+    'uk': 'Ukrainian',
+    'it': 'Italian',
+    'de': 'German',
+    'iw': 'Hebrew',
+    'sv': 'Swedish',
+    'ko': 'Korean',
+    'el': 'Greek',
 }
 
 export const execute = async (reaction) => {
     // if (!(getConfig(reaction.message.guild.id).translation.enabled)) return
     if (reaction.partial) await reaction.fetch()
+
+    let content = reaction.message.content
     
-    if (reaction.message.author.bot) return 
+    if (content == '') {
+        // It's an embed.
+        const embedData = reaction.message.embeds[0]
+        if (embedData.description == undefined || embedData.description == '') return
+
+        content = embedData.description
+    } 
 
     if (reaction.emoji.name in languages) {
-        translate(languages[reaction.emoji.name], reaction)
+        translate(languages[reaction.emoji.name], reaction, content)
     }
 }
