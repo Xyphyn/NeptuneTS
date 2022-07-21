@@ -1,5 +1,5 @@
-import { Guild } from "discord.js";
-import { config } from "../config/config.js";
+import { Guild } from 'discord.js'
+import { config } from '../config/config.js'
 
 export let loggingClient = undefined
 
@@ -8,7 +8,9 @@ export const setLoggingClient = (client) => {
 }
 
 export const logEmbed = (embed, guild) => {
-    const logChannel = loggingClient.channels.cache.get(config[guild.id].logging.loggingChannel)
-    if (!logChannel) return;
+    const logChannel = loggingClient.channels.cache.get(
+        config[guild.id].logging.loggingChannel
+    )
+    if (!logChannel) return
     logChannel.send({ embeds: [embed] })
 }

@@ -1,4 +1,8 @@
-import { deleteAllInDatabase, findInDatabase, insertToDatabase } from "../database/mongodb.js";
+import {
+    deleteAllInDatabase,
+    findInDatabase,
+    insertToDatabase
+} from '../database/mongodb.js'
 
 export const saveState = async () => {
     return new Promise(async (resolve, reject) => {
@@ -9,7 +13,7 @@ export const saveState = async () => {
 }
 
 export const loadState = async () => {
-    config = await findInDatabase('config', { }).toArray()
+    config = await findInDatabase('config', {}).toArray()
     config = config[0]
 }
 
@@ -25,6 +29,4 @@ export const getConfig = (interaction) => {
     return config[interaction.guild.id]
 }
 
-export let config = {
-
-}
+export let config = {}

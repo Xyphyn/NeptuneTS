@@ -1,22 +1,23 @@
-import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
-import { loadState } from "../config/config.js";
+import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
+import { loadState } from '../config/config.js'
 import os from 'os'
-import { PermissionsBitField } from "discord.js";
+import { PermissionsBitField } from 'discord.js'
 
 export const data = new SlashCommandBuilder()
     .setName('dev')
     .setDescription('Developer commands')
-    .addSubcommand(subcommand => subcommand
-        .setName('sync')
-        .setDescription('Refreshes config from database')
+    .addSubcommand((subcommand) =>
+        subcommand
+            .setName('sync')
+            .setDescription('Refreshes config from database')
     )
-    .addSubcommand(subcommand => subcommand
-        .setName('resources')
-        .setDescription('Resource usage of the bot')
+    .addSubcommand((subcommand) =>
+        subcommand
+            .setName('resources')
+            .setDescription('Resource usage of the bot')
     )
-    .addSubcommand(subcommand => subcommand
-        .setName('stop')
-        .setDescription('Stops the bot.')
+    .addSubcommand((subcommand) =>
+        subcommand.setName('stop').setDescription('Stops the bot.')
     )
 
 export const permissions = PermissionsBitField.Flags.SendMessages
@@ -26,7 +27,9 @@ export const execute = async (interaction) => {
     if (!(interaction.user.id == 735626570399481878)) {
         const embed = new EmbedBuilder()
             .setTitle('Error')
-            .setDescription('<:WindowsShieldUAC:999005696483926017> This command is only available for developers.')
+            .setDescription(
+                '<:WindowsShieldUAC:999005696483926017> This command is only available for developers.'
+            )
             .setColor(0xff0000)
         interaction.reply({
             embeds: [embed]
@@ -38,22 +41,32 @@ export const execute = async (interaction) => {
 
     switch (interaction.options.getSubcommand()) {
         case 'sync': {
-            embed.setTitle('Synced')
-                .setDescription('<:WindowsSuccess:977721596468928533> Done. Synced config with database.')
+            embed
+                .setTitle('Synced')
+                .setDescription(
+                    '<:WindowsSuccess:977721596468928533> Done. Synced config with database.'
+                )
                 .setColor('#5865f2')
 
             await loadState()
 
             interaction.reply({
-                embeds: [ embed ]
+                embeds: [embed]
             })
 
             break
         }
         case 'resources': {
-            embed.setTitle('<:system:998732644575621201> Resources')
-                .setDescription(`<:cpu:998732645187997748> CPU | ${os.loadavg()[0]}%
-                <:memory:998732647847182366> Memory | ${Math.round(process.memoryUsage().heapTotal / 1000000)} MB \`${Math.round((process.memoryUsage().heapTotal / 512000000) * 100)}%\``)
+            embed
+                .setTitle('<:system:998732644575621201> Resources')
+                .setDescription(
+                    `<:cpu:998732645187997748> CPU | ${os.loadavg()[0]}%
+                <:memory:998732647847182366> Memory | ${Math.round(
+                    process.memoryUsage().heapTotal / 1000000
+                )} MB \`${Math.round(
+                        (process.memoryUsage().heapTotal / 512000000) * 100
+                    )}%\``
+                )
                 .setColor('#5865f2')
 
             interaction.reply({
@@ -63,12 +76,13 @@ export const execute = async (interaction) => {
             break
         }
         case 'stop': {
-            embed.setTitle('Bot stopping.')
+            embed
+                .setTitle('Bot stopping.')
                 .setDescription('Stopping bot. It will restart shortly.')
                 .setColor('#5865f2')
 
             await interaction.reply({
-                embeds: [ embed ]
+                embeds: [embed]
             })
 
             process.exit(0)

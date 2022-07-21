@@ -1,10 +1,10 @@
-import { EmbedBuilder } from "discord.js";
+import { EmbedBuilder } from 'discord.js'
 
 export let baseConfig = {
     embedSettings: {
         color: '#0099ff',
         successColor: '#0eee0e',
-        errorColor: '#ff0f0f',
+        errorColor: '#ff0f0f'
     },
     emojiSettings: {
         warn: '<:WindowsWarning:977721596846436392>',
@@ -13,7 +13,12 @@ export let baseConfig = {
         success: '<:WindowsSuccess:977721596468928533>'
     },
     errorSettings: {
-        "no-permission": new EmbedBuilder().setTitle('Error').setColor('#ff0a0a').setDescription(`<:WindowsCritical:824380490051747840> You do not have permission to use this command.`),
+        'no-permission': new EmbedBuilder()
+            .setTitle('Error')
+            .setColor('#ff0a0a')
+            .setDescription(
+                `<:WindowsCritical:824380490051747840> You do not have permission to use this command.`
+            )
     },
     logging: {
         loggingChannel: '977253966851227730',

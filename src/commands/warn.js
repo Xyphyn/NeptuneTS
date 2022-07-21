@@ -1,37 +1,44 @@
-import { SlashCommandBuilder, EmbedBuilder } from "discord.js"
-import { dbConfig } from "../database/dbConfig.js"
-import { insertToDatabase } from "../database/mongodb.js"
+import { SlashCommandBuilder, EmbedBuilder } from 'discord.js'
+import { dbConfig } from '../database/dbConfig.js'
+import { insertToDatabase } from '../database/mongodb.js'
 import { v4 as uuid } from 'uuid'
-import { decidePunishment } from "../managers/punishmentManager.js"
-import { logEmbed } from "../managers/logManager.js"
-import { config, getConfig } from "../config/config.js"
-import { noPermission } from "../managers/errorManager.js"
-import { delay } from "../managers/util.js"
-import { PermissionsBitField } from "discord.js"
+import { decidePunishment } from '../managers/punishmentManager.js'
+import { logEmbed } from '../managers/logManager.js'
+import { config, getConfig } from '../config/config.js'
+import { noPermission } from '../managers/errorManager.js'
+import { delay } from '../managers/util.js'
+import { PermissionsBitField } from 'discord.js'
 
 export const data = new SlashCommandBuilder()
-    .setName("warn")
-    .setDescription("Warning commands")
-    .addUserOption(option => option
-        .setName('user')
-        .setDescription('The user to warn.')
-        .setRequired(true))
-    .addStringOption(option => option
-        .setName('reason')
-        .setDescription('The reason for the warning.')
-        .setRequired(false))
+    .setName('warn')
+    .setDescription('Warning commands')
+    .addUserOption((option) =>
+        option
+            .setName('user')
+            .setDescription('The user to warn.')
+            .setRequired(true)
+    )
+    .addStringOption((option) =>
+        option
+            .setName('reason')
+            .setDescription('The reason for the warning.')
+            .setRequired(false)
+    )
 
 export const permissions = PermissionsBitField.Flags.SendMessages
 export const permissionsString = 'Send Messages'
 
 export const execute = async (interaction, client) => {
-
     const user = await interaction.options.getUser('user')
     const guild = await interaction.guild.id
 
-    if (!interaction.member.permissions.has(PermissionsBitField.Flags.ModerateMembers)) {
+    if (
+        !interaction.member.permissions.has(
+            PermissionsBitField.Flags.ModerateMembers
+        )
+    ) {
         interaction.reply({
-            embeds: [ noPermission('ModerateMembers') ]
+            embeds: [noPermission('ModerateMembers')]
         })
         return
     }
@@ -44,38 +51,29 @@ export const execute = async (interaction, client) => {
         const huh = [
             'D- D- Did you just try having ***me*** warn ***__myself__***? :neutral_face:',
             'What the heck are you doing?',
-            'You can\'t warn me!',
+            "You can't warn me!",
             'you want *me* to warn *me*?'
         ]
 
-        const uhm = [
-            'what... uh...',
-            'well this is awkward...',
-            'uhm',
-            'wat'
-        ]
+        const uhm = ['what... uh...', 'well this is awkward...', 'uhm', 'wat']
 
-        const okay = [
-            'whatever...',
-            'okay...?',
-            'why though?'
-        ]
+        const okay = ['whatever...', 'okay...?', 'why though?']
 
         await interaction.reply({
             content: huh[~~(Math.random() * huh.length)]
         })
 
         await delay(1000)
-        await interaction.channel.sendTyping();
+        await interaction.channel.sendTyping()
         await delay(1000)
-        await interaction.channel.send(uhm[~~(Math.random() * uhm.length)]);
+        await interaction.channel.send(uhm[~~(Math.random() * uhm.length)])
 
-        await interaction.channel.sendTyping();
+        await interaction.channel.sendTyping()
         await delay(1000)
-        await interaction.channel.send(okay[~~(Math.random() * okay.length)]);
+        await interaction.channel.send(okay[~~(Math.random() * okay.length)])
 
         await delay(1000)
-        await interaction.channel.sendTyping();
+        await interaction.channel.sendTyping()
         await delay(500)
     }
 
@@ -90,24 +88,59 @@ export const execute = async (interaction, client) => {
 
     insertToDatabase(dbConfig.warningCollection, data)
 
-    const embed = new EmbedBuilder().setColor(config[interaction.guild.id].embedSettings.color).setAuthor({ name: user.username, iconURL: user.displayAvatarURL() }).addFields([{name: 'Offending User', value: `<@${user.id}>`, inline: true},{ name: 'Moderator', value: `<@${moderator}>`, inline: true },{name: 'Reason', value: reason ?? 'No reason specified.', inline: true}]).setFooter({ text: `${data.id}` })
+    const embed = new EmbedBuilder()
+        .setColor(config[interaction.guild.id].embedSettings.color)
+        .setAuthor({ name: user.username, iconURL: user.displayAvatarURL() })
+        .addFields([
+            { name: 'Offending User', value: `<@${user.id}>`, inline: true },
+            { name: 'Moderator', value: `<@${moderator}>`, inline: true },
+            {
+                name: 'Reason',
+                value: reason ?? 'No reason specified.',
+                inline: true
+            }
+        ])
+        .setFooter({ text: `${data.id}` })
 
     logEmbed(embed, interaction.guild)
 
-    if (!(interaction.replied)) {
+    if (!interaction.replied) {
         await interaction.reply({
-            content: `${config[interaction.guild.id].emojiSettings.warn} <@${interaction.options.getUser('user').id}> has been warned. **${interaction.options.getString('reason') ?? 'No reason specified.'}**`,
+            content: `${config[interaction.guild.id].emojiSettings.warn} <@${
+                interaction.options.getUser('user').id
+            }> has been warned. **${
+                interaction.options.getString('reason') ??
+                'No reason specified.'
+            }**`
         })
     } else {
         await interaction.channel.send({
-            content: `${config[interaction.guild.id].emojiSettings.warn} <@${interaction.options.getUser('user').id}> has been warned. **${interaction.options.getString('reason') ?? 'No reason specified.'}**`,
+            content: `${config[interaction.guild.id].emojiSettings.warn} <@${
+                interaction.options.getUser('user').id
+            }> has been warned. **${
+                interaction.options.getString('reason') ??
+                'No reason specified.'
+            }**`
         })
     }
 
     if (await decidePunishment(user, interaction.guild)) {
-        await interaction.channel.send(`${config[interaction.guild.id].emojiSettings.mute} <@${interaction.options.getUser('user').id}> has been muted. **Automatic mute after 3 warnings within ${getConfig(interaction).punishmentSettings.warningHours} hours.**`)
+        await interaction.channel.send(
+            `${config[interaction.guild.id].emojiSettings.mute} <@${
+                interaction.options.getUser('user').id
+            }> has been muted. **Automatic mute after 3 warnings within ${
+                getConfig(interaction).punishmentSettings.warningHours
+            } hours.**`
+        )
 
-        embed.setColor(config[interaction.guild.id].embedSettings.errorColor).setFields([{ name: 'Muted', value: '**Automatic mute after 3 warnings within 24 hours.**' }])
+        embed
+            .setColor(config[interaction.guild.id].embedSettings.errorColor)
+            .setFields([
+                {
+                    name: 'Muted',
+                    value: '**Automatic mute after 3 warnings within 24 hours.**'
+                }
+            ])
 
         logEmbed(embed, interaction.guild)
     }

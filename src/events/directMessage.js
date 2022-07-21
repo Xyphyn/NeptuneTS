@@ -1,13 +1,13 @@
-import { EmbedBuilder } from "discord.js";
-import { embedSettings } from "../config/embeds.js";
-import { loggingConfig } from "../config/logging.js";
+import { EmbedBuilder } from 'discord.js'
+import { embedSettings } from '../config/embeds.js'
+import { loggingConfig } from '../config/logging.js'
 import { client } from '../app.js'
-import { config } from "../config/config.js";
+import { config } from '../config/config.js'
 
-export const name = 'messageCreate';
+export const name = 'messageCreate'
 export const once = false
 export const execute = async (message) => {
-    if (message.author.bot) return;
+    if (message.author.bot) return
 
     if (!(message.guild == null)) return
 

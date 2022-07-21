@@ -8,25 +8,44 @@ import { client } from './app.js'
 
 export async function deploy() {
     return new Promise(async (resolve, reject) => {
-        const spinner = createSpinner(chalk.yellow(`Deploying commands for ${chalk.bold(`${client.guilds.cache.size}`)} guilds...`)).start()
+        const spinner = createSpinner(
+            chalk.yellow(
+                `Deploying commands for ${chalk.bold(
+                    `${client.guilds.cache.size}`
+                )} guilds...`
+            )
+        ).start()
         let commands = []
-        const commandFiles = fs.readdirSync('./src/commands').filter(file => file.endsWith('.js'));
-    
+        const commandFiles = fs
+            .readdirSync('./src/commands')
+            .filter((file) => file.endsWith('.js'))
+
         for (const file of commandFiles) {
             const command = await import(`./commands/${file}`)
             commands.push(command.data.toJSON())
+
+            console.log(command)
         }
-    
-        const rest = new REST({ version: '9' }).setToken(process.env.TOKEN)
-    
-        const guilds = client.guilds.cache.map(guild => guild.id)
+
+        const rest = new REST({ version: '10' }).setToken(process.env.TOKEN)
+
+        const guilds = client.guilds.cache.map((guild) => guild.id)
         let counter = guilds.length
         for (const guild of guilds) {
-            rest.put(Routes.applicationGuildCommands(process.env.DEV_CLIENT_ID, guild), { body: commands })
-            .then(() => {})
-            .catch(error => spinner.error({ text: chalk.red(`${error}`) }))
+            rest.put(
+                Routes.applicationGuildCommands(
+                    process.env.DEV_CLIENT_ID,
+                    guild
+                ),
+                { body: commands }
+            )
+                .then(() => {})
+                .catch((error) =>
+                    spinner.error({ text: chalk.red(`${error}`) })
+                )
             counter -= 1
-            if (counter <= 0) spinner.success({ text: chalk.green(`Deployed commands`) })
+            if (counter <= 0)
+                spinner.success({ text: chalk.green(`Deployed commands`) })
         }
         resolve()
     })
