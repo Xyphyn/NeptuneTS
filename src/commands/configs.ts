@@ -1,6 +1,6 @@
-import { PermissionsBitField } from 'discord.js'
+import { ChatInputCommandInteraction, PermissionsBitField } from 'discord.js'
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
-import { config, saveState } from '../config/config.js'
+import { config, getConfig, saveState } from '../config/config.js'
 
 export const data = new SlashCommandBuilder()
     .setName('config')
@@ -26,27 +26,27 @@ export const data = new SlashCommandBuilder()
 export const permissions = PermissionsBitField.Flags.Administrator
 export const permissionsString = 'Administrator'
 
-function leaf(obj, path, value) {
+function leaf(obj: object, path: string, value: any) {
     const pList = path.split('.')
     const key = pList.pop()
-    const pointer = pList.reduce((accumulator, currentValue) => {
+    const pointer = pList.reduce((accumulator: any, currentValue: any) => {
         if (accumulator[currentValue] === undefined)
             accumulator[currentValue] = {}
         return accumulator[currentValue]
     }, obj)
-    if (pointer[key] != undefined) {
-        pointer[key] = value
+    if (pointer[key!] != undefined) {
+        pointer[key!] = value
         return obj
     } else return false
 }
 
-export const execute = async (interaction, client) => {
+export const execute = async (interaction: ChatInputCommandInteraction) => {
     const embed = new EmbedBuilder()
         .setTitle('Setting configs....')
         .setDescription(
             `<a:WindowsLoading:883414701218873376> Setting configs...`
         )
-        .setColor(config[interaction.guild.id].embedSettings.color)
+        .setColor(getConfig(interaction).embedSettings.color)
     if (interaction.options.getSubcommand() === 'set') {
         await interaction.reply({
             embeds: [embed]
@@ -55,7 +55,7 @@ export const execute = async (interaction, client) => {
         const key = interaction.options.getString('key')
         const value = interaction.options.getString('value')
 
-        const result = leaf(config[interaction.guild.id], key, value)
+        const result = leaf(getConfig(interaction), key!, value)
 
         await saveState()
 

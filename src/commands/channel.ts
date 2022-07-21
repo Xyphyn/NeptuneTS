@@ -1,4 +1,8 @@
-import { PermissionsBitField } from 'discord.js'
+import {
+    ChatInputCommandInteraction,
+    GuildChannel,
+    PermissionsBitField
+} from 'discord.js'
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
 import ms from 'ms'
 import { getConfig } from '../config/config.js'
@@ -21,10 +25,10 @@ export const data = new SlashCommandBuilder()
 export const permissions = PermissionsBitField.Flags.ManageChannels
 export const permissionsString = 'Manage Channels'
 
-export const execute = async (interaction, client) => {
+export const execute = async (interaction: ChatInputCommandInteraction) => {
     const slowmode =
-        Math.floor(ms(interaction.options.getString('slowmode')) / 1000) ?? 0
-    const channel = interaction.channel
+        Math.floor(ms(interaction.options.getString('slowmode')!) / 1000) ?? 0
+    const channel: any = interaction.channel
 
     const embed = new EmbedBuilder()
         .setTitle('Slowmode set')

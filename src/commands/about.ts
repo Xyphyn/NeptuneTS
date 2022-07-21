@@ -1,10 +1,14 @@
-import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
+import {
+    ChatInputCommandInteraction,
+    EmbedBuilder,
+    SlashCommandBuilder
+} from 'discord.js'
 
 export const data = new SlashCommandBuilder()
     .setName('about')
     .setDescription('About this bot!')
 
-export const execute = async (interaction, client) => {
+export const execute = async (interaction: ChatInputCommandInteraction) => {
     const embed = new EmbedBuilder().setColor('#5865f2').setTitle('About')
         .setDescription(`
     Hey! This bot is a work in progress. It's made by Xylight#0001, and can work multi-server and has many useful moderation commands, as well as configs.

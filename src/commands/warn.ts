@@ -1,4 +1,8 @@
-import { SlashCommandBuilder, EmbedBuilder } from 'discord.js'
+import {
+    SlashCommandBuilder,
+    EmbedBuilder,
+    ChatInputCommandInteraction
+} from 'discord.js'
 import { dbConfig } from '../database/dbConfig.js'
 import { insertToDatabase } from '../database/mongodb.js'
 import { v4 as uuid } from 'uuid'
@@ -8,6 +12,7 @@ import { config, getConfig } from '../config/config.js'
 import { noPermission } from '../managers/errorManager.js'
 import { delay } from '../managers/util.js'
 import { PermissionsBitField } from 'discord.js'
+import { client } from '../app.js'
 
 export const data = new SlashCommandBuilder()
     .setName('warn')
@@ -28,12 +33,12 @@ export const data = new SlashCommandBuilder()
 export const permissions = PermissionsBitField.Flags.SendMessages
 export const permissionsString = 'Send Messages'
 
-export const execute = async (interaction, client) => {
-    const user = await interaction.options.getUser('user')
-    const guild = await interaction.guild.id
+export const execute = async (interaction: ChatInputCommandInteraction) => {
+    const user = interaction.options.getUser('user')!
+    const guild = interaction.guild!.id
 
     if (
-        !interaction.member.permissions.has(
+        !interaction.member!.permissions.has(
             PermissionsBitField.Flags.ModerateMembers
         )
     ) {
@@ -64,16 +69,16 @@ export const execute = async (interaction, client) => {
         })
 
         await delay(1000)
-        await interaction.channel.sendTyping()
+        await interaction.channel!.sendTyping()
         await delay(1000)
-        await interaction.channel.send(uhm[~~(Math.random() * uhm.length)])
+        await interaction.channel!.send(uhm[~~(Math.random() * uhm.length)])
 
-        await interaction.channel.sendTyping()
+        await interaction.channel!.sendTyping()
         await delay(1000)
-        await interaction.channel.send(okay[~~(Math.random() * okay.length)])
+        await interaction.channel!.send(okay[~~(Math.random() * okay.length)])
 
         await delay(1000)
-        await interaction.channel.sendTyping()
+        await interaction.channel!.sendTyping()
         await delay(500)
     }
 
@@ -89,7 +94,7 @@ export const execute = async (interaction, client) => {
     insertToDatabase(dbConfig.warningCollection, data)
 
     const embed = new EmbedBuilder()
-        .setColor(config[interaction.guild.id].embedSettings.color)
+        .setColor(getConfig(interaction).embedSettings.color)
         .setAuthor({ name: user.username, iconURL: user.displayAvatarURL() })
         .addFields([
             { name: 'Offending User', value: `<@${user.id}>`, inline: true },
@@ -106,17 +111,17 @@ export const execute = async (interaction, client) => {
 
     if (!interaction.replied) {
         await interaction.reply({
-            content: `${config[interaction.guild.id].emojiSettings.warn} <@${
-                interaction.options.getUser('user').id
+            content: `${getConfig(interaction).emojiSettings.warn} <@${
+                user.id
             }> has been warned. **${
                 interaction.options.getString('reason') ??
                 'No reason specified.'
             }**`
         })
     } else {
-        await interaction.channel.send({
-            content: `${config[interaction.guild.id].emojiSettings.warn} <@${
-                interaction.options.getUser('user').id
+        await interaction.channel!.send({
+            content: `${getConfig(interaction).emojiSettings.warn} <@${
+                user.id
             }> has been warned. **${
                 interaction.options.getString('reason') ??
                 'No reason specified.'
@@ -125,16 +130,16 @@ export const execute = async (interaction, client) => {
     }
 
     if (await decidePunishment(user, interaction.guild)) {
-        await interaction.channel.send(
-            `${config[interaction.guild.id].emojiSettings.mute} <@${
-                interaction.options.getUser('user').id
+        await interaction.channel!.send(
+            `${getConfig(interaction).emojiSettings.mute} <@${
+                user.id
             }> has been muted. **Automatic mute after 3 warnings within ${
                 getConfig(interaction).punishmentSettings.warningHours
             } hours.**`
         )
 
         embed
-            .setColor(config[interaction.guild.id].embedSettings.errorColor)
+            .setColor(getConfig(interaction).embedSettings.errorColor)
             .setFields([
                 {
                     name: 'Muted',

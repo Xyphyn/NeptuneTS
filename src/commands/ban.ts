@@ -1,4 +1,4 @@
-import { PermissionsBitField } from 'discord.js'
+import { ChatInputCommandInteraction, PermissionsBitField } from 'discord.js'
 import { PermissionFlagsBits } from 'discord.js'
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
 import { config, getConfig } from '../config/config.js'
@@ -23,15 +23,15 @@ export const data = new SlashCommandBuilder()
 export const permissions = PermissionFlagsBits.BanMembers
 export const permissionsString = 'Ban Members'
 
-export const execute = async (interaction, client) => {
-    const user = interaction.options.getUser('user')
-    const guildMember = await interaction.guild.members.fetch(user.id)
+export const execute = async (interaction: ChatInputCommandInteraction) => {
+    const user = interaction.options.getUser('user')!
+    const guildMember = await interaction.guild!.members.fetch(user.id)
     const reason = interaction.options.getString('reason')
     const moderator = interaction.user.id
 
     const embed = new EmbedBuilder()
         .setColor(getConfig(interaction).embedSettings.color)
-        .setAuthor({ name: user.username, iconURL: user.avatarURL() })
+        .setAuthor({ name: user.username, iconURL: user.avatarURL()! })
         .setDescription('Ban')
         .addFields([
             { name: 'Offending User', value: `<@${user.id}>`, inline: true },

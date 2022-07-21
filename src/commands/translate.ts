@@ -1,4 +1,4 @@
-import { EmbedBuilder } from 'discord.js'
+import { ChatInputCommandInteraction, EmbedBuilder } from 'discord.js'
 import { SlashCommandBuilder } from 'discord.js'
 import { getConfig } from '../config/config.js'
 import { getTranslation, languageNames } from '../events/reaction.js'
@@ -36,21 +36,22 @@ export const data = new SlashCommandBuilder()
             .setRequired(true)
     )
 
-export const execute = async (interaction) => {
+export const execute = async (interaction: ChatInputCommandInteraction) => {
     const text = interaction.options.getString('text')
-    const language = interaction.options.getString('language')
+    const language: any = interaction.options.getString('language')!
     const embed = new EmbedBuilder()
         .setTitle('Translation')
         .setDescription(
             `<a:WindowsLoading:998707398267130028> Translating to ${languageNames[language]}...`
         )
-        .setColor(getConfig(interaction.guild.id).embedSettings.color)
-    interaction.reply({
+        .setColor(getConfig(interaction.guild!.id).embedSettings.color)
+
+    await interaction.reply({
         embeds: [embed]
     })
     const translation = await getTranslation(
         `https://translate.google.com/?sl=auto&tl=${language}&text=${encodeURIComponent(
-            text
+            text!
         )}&op=translate`
     )
 
@@ -59,10 +60,10 @@ export const execute = async (interaction) => {
         .setFooter({ text: `Translated to ${languageNames[language]}` })
         .setAuthor({
             name: interaction.user.username,
-            iconURL: interaction.user.avatarURL()
+            iconURL: interaction.user.avatarURL()!
         })
 
-    interaction.editReply({
+    await interaction.editReply({
         embeds: [embed]
     })
 }
