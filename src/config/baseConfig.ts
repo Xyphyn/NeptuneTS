@@ -1,6 +1,6 @@
 import { EmbedBuilder } from 'discord.js'
 
-export let baseConfig = {
+export let baseConfig: any = {
     embedSettings: {
         color: '#0099ff',
         successColor: '#0eee0e',

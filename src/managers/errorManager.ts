@@ -1,7 +1,6 @@
 import { EmbedBuilder } from 'discord.js'
-import { embedSettings } from '../config/embeds.js'
 
-export const noPermission = (required) => {
+export const noPermission = (required: string) => {
     const embed = new EmbedBuilder()
         .setTitle('Missing Permission')
         .setDescription(
@@ -10,6 +9,6 @@ export const noPermission = (required) => {
         .addFields([
             { name: 'Required', value: `\`${required}\``, inline: true }
         ])
-        .setColor(embedSettings.errorColor)
+        .setColor('Red')
     return embed
 }

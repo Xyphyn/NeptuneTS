@@ -1,12 +1,9 @@
-import { EmbedBuilder } from 'discord.js'
-import { embedSettings } from '../config/embeds.js'
-import { loggingConfig } from '../config/logging.js'
+import { EmbedBuilder, Message } from 'discord.js'
 import { client } from '../app.js'
-import { config } from '../config/config.js'
 
 export const name = 'messageCreate'
 export const once = false
-export const execute = async (message) => {
+export const execute = async (message: Message) => {
     if (message.author.bot) return
 
     if (!(message.guild == null)) return
@@ -22,9 +19,11 @@ export const execute = async (message) => {
         timestamp: new Date().getTime()
     })
 
-    if (loggingConfig.logDirectMessages) {
-        client.channels.cache.get(loggingConfig.loggingChannel).send({
-            embeds: [embed]
-        })
-    }
+    const loggingChannel: any = await client.channels.fetch(
+        '977253966851227730'
+    )
+
+    loggingChannel.send({
+        embeds: [embed]
+    })
 }

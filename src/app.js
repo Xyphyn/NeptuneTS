@@ -14,7 +14,6 @@ import {
 import chalk from 'chalk'
 import { config as dotenv_config } from 'dotenv'
 import fs from 'fs'
-import { embedSettings } from './config/embeds.js'
 import { deploy } from './deploy-commands.js'
 import { connectToDatabase, refreshGuilds } from './database/mongodb.js'
 import { setLoggingClient } from './managers/logManager.js'
@@ -129,7 +128,7 @@ client.on('interactionCreate', async (interaction) => {
         const stack = error.message
 
         const embed = new EmbedBuilder()
-            .setColor(embedSettings.errorColor)
+            .setColor('Red')
             .setTitle('Error')
             .setDescription(
                 `<:BSOD:984972563358814228> \`${error.name}\` occured during execution!`
@@ -156,7 +155,7 @@ client.on('interactionCreate', async (interaction) => {
             collector.on('collect', (message) => {
                 if (message.content === 'stack pls') {
                     const stackEmbed = new EmbedBuilder()
-                        .setColor(embedSettings.errorColor)
+                        .setColor('Red')
                         .setTitle('Full Stack')
                         .setDescription(`\`\`\`js${stack}\`\`\``)
                     message.channel.send({ embeds: [stackEmbed] })
@@ -174,7 +173,7 @@ client.on('interactionCreate', async (interaction) => {
                 collector.on('collect', (message) => {
                     if (message.content === 'stack pls') {
                         const stackEmbed = new EmbedBuilder()
-                            .setColor(embedSettings.errorColor)
+                            .setColor('Red')
                             .setTitle('Full Stack')
                             .setDescription(`\`\`\`js${stack}\`\`\``)
                         message.channel.send({ embeds: [stackEmbed] })
@@ -191,7 +190,7 @@ client.on('interactionCreate', async (interaction) => {
                 collector.on('collect', (message) => {
                     if (message.content === 'stack pls') {
                         const stackEmbed = new EmbedBuilder()
-                            .setColor(embedSettings.errorColor)
+                            .setColor('Red')
                             .setTitle('Full Stack')
                             .setDescription(`\`\`\`js${stack}\`\`\``)
                         message.channel.send({ embeds: [stackEmbed] })

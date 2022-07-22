@@ -30,26 +30,15 @@ export const data = new SlashCommandBuilder()
             .setRequired(false)
     )
 
-export const permissions = PermissionsBitField.Flags.SendMessages
-export const permissionsString = 'Send Messages'
+export const permissions = PermissionsBitField.Flags.ModerateMembers
+export const permissionsString = 'Moderate Members'
 
 export const execute = async (interaction: ChatInputCommandInteraction) => {
     const user = interaction.options.getUser('user')!
     const guild = interaction.guild!.id
 
-    if (
-        !interaction.member!.permissions.has(
-            PermissionsBitField.Flags.ModerateMembers
-        )
-    ) {
-        interaction.reply({
-            embeds: [noPermission('ModerateMembers')]
-        })
-        return
-    }
-
-    const reason = await interaction.options.getString('reason')
-    const moderator = await interaction.user.id
+    const reason = interaction.options.getString('reason')
+    const moderator = interaction.user.id
     const time = new Date().getTime()
 
     if (user == client.user) {
@@ -107,7 +96,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
         ])
         .setFooter({ text: `${data.id}` })
 
-    logEmbed(embed, interaction.guild)
+    logEmbed(embed, interaction.guild!)
 
     if (!interaction.replied) {
         await interaction.reply({
@@ -129,7 +118,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
         })
     }
 
-    if (await decidePunishment(user, interaction.guild)) {
+    if (await decidePunishment(user, interaction.guild!)) {
         await interaction.channel!.send(
             `${getConfig(interaction).emojiSettings.mute} <@${
                 user.id
@@ -147,6 +136,6 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
                 }
             ])
 
-        logEmbed(embed, interaction.guild)
+        logEmbed(embed, interaction.guild!)
     }
 }
