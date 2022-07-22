@@ -41,7 +41,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     const moderator = interaction.user.id!
 
     const embed = new EmbedBuilder()
-        .setColor(getConfig().embedSettings.errorColor)
+        .setColor(getConfig(interaction).embedSettings.errorColor)
         .setAuthor({ name: user.username, iconURL: user.displayAvatarURL() })
         .setDescription('Timeout')
         .addFields([
@@ -59,7 +59,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     const member = await interaction.guild!.members.cache.get(user.id)
     await member!.timeout(time)
 
-    logEmbed(embed, interaction.guild)
+    logEmbed(embed, interaction.guild!)
 
     await interaction.reply({
         content: `${getConfig(interaction).emojiSettings.mute} <@${

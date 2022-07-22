@@ -1,5 +1,9 @@
-import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
-import { config } from '../config/config.js'
+import {
+    ChatInputCommandInteraction,
+    EmbedBuilder,
+    SlashCommandBuilder
+} from 'discord.js'
+import { config, getConfig } from '../config/config.js'
 import { dbConfig } from '../database/dbConfig.js'
 import { findInDatabase } from '../database/mongodb.js'
 
@@ -29,13 +33,13 @@ export const data = new SlashCommandBuilder()
             .setRequired(false)
     )
 
-export const execute = async (interaction, client) => {
+export const execute = async (interaction: ChatInputCommandInteraction) => {
     await interaction.deferReply({
         ephemeral: interaction.options.getBoolean('private') ?? true
     })
 
-    const user = await interaction.options.getUser('user')
-    const guild = await interaction.guild.id
+    const user = interaction.options.getUser('user')!
+    const guild = interaction.guild!.id
 
     const data = {
         user: user.id,
@@ -48,17 +52,17 @@ export const execute = async (interaction, client) => {
     ).toArray()
 
     let warningString = ''
-    warnings.forEach((warning) => {
+    warnings.forEach((warning: any) => {
         warningString += `<t:${Math.floor(warning.time / 1000)}:R> **${
             warning.reason
         }** ${interaction.options.getBoolean('show-id') ? warning.id : ''}\n`
     })
 
-    let color = config[interaction.guild.id].embedSettings.color
+    let color = getConfig(interaction).embedSettings.color
 
     if (warningString === '') {
         warningString = 'No warnings found.'
-        color = config[interaction.guild.id].embedSettings.successColor
+        color = getConfig(interaction).embedSettings.successColor
     }
 
     const embed = new EmbedBuilder()
@@ -68,7 +72,6 @@ export const execute = async (interaction, client) => {
         .setDescription(warningString)
 
     await interaction.editReply({
-        embeds: [embed],
-        ephemeral: interaction.options.getBoolean('private') ?? true
+        embeds: [embed]
     })
 }

@@ -16,18 +16,10 @@ export const data = new SlashCommandBuilder()
             .setRequired(true)
     )
 
-export const execute = async (interaction: ChatInputCommandInteraction) => {
-    if (
-        !interaction.member!.permissions.has(
-            PermissionsBitField.Flags.ModerateMembers
-        )
-    ) {
-        interaction.reply({
-            embeds: [noPermission('Moderate Members')]
-        })
-        return
-    }
+export const permissions = PermissionsBitField.Flags.ModerateMembers
+export const permissionsString = 'Moderate Members'
 
+export const execute = async (interaction: ChatInputCommandInteraction) => {
     const uuid = await interaction.options.getString('uuid')
     deleteFromDatabase(dbConfig.warningCollection, { id: uuid })
     const embed = new EmbedBuilder()
@@ -47,7 +39,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
             `<:WindowsRecycleBin:824380487920910348> Warning of UUID \`${uuid}\` has been deleted.`
         )
 
-    logEmbed(embed2, interaction.guild)
+    logEmbed(embed2, interaction.guild!)
     await interaction.reply({
         embeds: [embed2]
     })

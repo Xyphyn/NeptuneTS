@@ -1,3 +1,3 @@
-export const dbConfig = {
+export const dbConfig: any = {
     warningCollection: 'warnings'
 }
