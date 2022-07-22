@@ -4,9 +4,10 @@
   "description": "A general purpose discord bot.",
   "main": "src/app.js",
   "scripts": {
-    "build": "tsc",
     "dev": "node src/app.js",
-    "start": "node dist/app.js"
+    "start": "node dist/app.js",
+    "tsc": "tsc",
+    "postinstall": "tsc"
   },
   "type": "module",
   "author": "Xylight",
@@ -24,7 +25,6 @@
     "node-fetch": "^3.2.4",
     "puppeteer": "^15.4.0",
     "ts-node": "^10.9.1",
-    "tsc": "^2.0.4",
     "typescript": "^4.7.4",
     "uuid": "^8.3.2"
   },
