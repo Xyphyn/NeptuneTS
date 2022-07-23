@@ -1,6 +1,7 @@
 import { ChatInputCommandInteraction, PermissionsBitField } from 'discord.js'
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
 import { config, getConfig, saveState } from '../config/config.js'
+import { globalConfig } from '../config/globalConfig.js'
 
 export const data = new SlashCommandBuilder()
     .setName('config')
@@ -43,9 +44,7 @@ function leaf(obj: object, path: string, value: any) {
 export const execute = async (interaction: ChatInputCommandInteraction) => {
     const embed = new EmbedBuilder()
         .setTitle('Setting configs....')
-        .setDescription(
-            `<a:WindowsLoading:883414701218873376> Setting configs...`
-        )
+        .setDescription(`${globalConfig.loadingEmoji} Setting configs...`)
         .setColor(getConfig(interaction).embedSettings.color)
     if (interaction.options.getSubcommand() === 'set') {
         await interaction.reply({

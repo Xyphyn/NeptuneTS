@@ -2,6 +2,7 @@ import { EmbedBuilder, MessageReaction } from 'discord.js'
 import fetch from 'node-fetch'
 import puppeteer from 'puppeteer'
 import { getConfig } from '../config/config.js'
+import { globalConfig } from '../config/globalConfig.js'
 
 export const name = 'messageReactionAdd'
 export const once = false
@@ -42,7 +43,7 @@ const translate = async (
     const embed = new EmbedBuilder()
         .setTitle('Translation')
         .setDescription(
-            `<a:WindowsLoading:998707398267130028> Translating to **${languageName}**...`
+            `${globalConfig.loadingEmoji} Translating to **${languageName}**...`
         )
 
     if (reaction.message.guild != undefined)

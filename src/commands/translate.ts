@@ -1,6 +1,7 @@
 import { ChatInputCommandInteraction, EmbedBuilder } from 'discord.js'
 import { SlashCommandBuilder } from 'discord.js'
 import { getConfig } from '../config/config.js'
+import { globalConfig } from '../config/globalConfig.js'
 import { getTranslation, languageNames } from '../events/reaction.js'
 
 export const data = new SlashCommandBuilder()
@@ -42,7 +43,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     const embed = new EmbedBuilder()
         .setTitle('Translation')
         .setDescription(
-            `<a:WindowsLoading:998707398267130028> Translating to ${languageNames[language]}...`
+            `${globalConfig.loadingEmoji} Translating to ${languageNames[language]}...`
         )
         .setColor(getConfig(interaction.guild!.id).embedSettings.color)
 
