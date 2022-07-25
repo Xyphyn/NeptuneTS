@@ -39,7 +39,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
             `<:WindowsRecycleBin:824380487920910348> Warning of UUID \`${uuid}\` has been deleted.`
         )
 
-    logEmbed(embed2, interaction.guild!)
+    logEmbed(embed2, interaction.guild!, interaction)
     await interaction.reply({
         embeds: [embed2]
     })

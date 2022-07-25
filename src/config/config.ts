@@ -25,8 +25,7 @@ export const saveState = async () => {
                     delete a._id
                     delete config[guild]._id
                     if (JSON.stringify(config[guild]) == JSON.stringify(a)) {
-                        resolve(null)
-                        return
+                        continue
                     }
                     config[guild].id = guild
                     await updateInDatabase(

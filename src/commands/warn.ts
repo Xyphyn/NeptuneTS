@@ -96,7 +96,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
         ])
         .setFooter({ text: `${data.id}` })
 
-    logEmbed(embed, interaction.guild!)
+    logEmbed(embed, interaction.guild!, interaction)
 
     if (!interaction.replied) {
         await interaction.reply({
@@ -118,7 +118,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
         })
     }
 
-    if (await decidePunishment(user, interaction.guild!)) {
+    if (await decidePunishment(user, interaction.guild!, interaction)) {
         await interaction.channel!.send(
             `${getConfig(interaction).emojiSettings.mute} <@${
                 user.id
@@ -136,6 +136,6 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
                 }
             ])
 
-        logEmbed(embed, interaction.guild!)
+        logEmbed(embed, interaction.guild!, interaction)
     }
 }

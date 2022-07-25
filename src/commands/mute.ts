@@ -59,7 +59,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     const member = await interaction.guild!.members.cache.get(user.id)
     await member!.timeout(time)
 
-    logEmbed(embed, interaction.guild!)
+    logEmbed(embed, interaction.guild!, interaction)
 
     await interaction.reply({
         content: `${getConfig(interaction).emojiSettings.mute} <@${

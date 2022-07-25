@@ -202,6 +202,44 @@ client.on('interactionCreate', async (interaction) => {
     }
 })
 
+// Alternate error handler
+
+const sendErrorDM = async (type, err) => {
+    const embed = new EmbedBuilder()
+        .setTitle('Error')
+        .setDescription(`**Neptune** caught an \`${type}\``)
+        .addFields([
+            {
+                name: 'Stack',
+                value: `\`\`\`js\n${err.stack}\n\`\`\``
+            }
+        ])
+        .setColor('Red')
+
+    const user = await client.users.fetch('735626570399481878')
+    user.send({
+        embeds: [embed]
+    })
+}
+
+// process.on('unhandledRejection', (reason, p) => {
+//     console.log(' [antiCrash] :: Unhandled Rejection/Catch')
+//     console.log(reason, p)
+//     sendErrorDM('unhandledRejection', p)
+// })
+
+// process.on('uncaughtException', (err, origin) => {
+//     console.log(' [antiCrash] :: Uncaught Exception/Catch')
+//     console.log(err, origin)
+//     sendErrorDM('uncaughtException', err)
+// })
+
+// process.on('uncaughtExceptionMonitor', (err, origin) => {
+//     console.log(' [antiCrash] :: Uncaught Exception/Catch (MONITOR)')
+//     console.log(err, origin)
+//     sendErrorDM('uncaughtExceptionMonitor', err)
+// })
+
 spinner.update({ text: chalk.yellow('Logging in...') })
 client.login(process.env.TOKEN).catch((error) => {
     spinner.error({ text: chalk.red(`${error}`) })

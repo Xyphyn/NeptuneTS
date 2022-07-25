@@ -61,7 +61,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
         return
     }
 
-    logEmbed(embed, interaction.guild!)
+    logEmbed(embed, interaction.guild!, interaction)
 
     await interaction.reply({
         content: `${getConfig(interaction).emojiSettings.ban} <@${
