@@ -15,17 +15,21 @@ export const refreshGuilds = async (client: any) => {
         guilds.forEach((guild: string) => {
             if (!config[guild]) {
                 config[guild] = baseConfig
+                console.log('config is not existent')
             }
 
-            const merge = (obj1: any, obj2: any) => {
+            const merge: any = (obj1: any, obj2: any) => {
                 for (var p in obj2) {
                     try {
                         if (obj2[p].constructor == Object) {
                             obj1[p] = merge(obj1[p], obj2[p])
                         } else {
-                            obj1[p] = obj2[p]
+                            obj1[p][0]
                         }
                     } catch (e) {
+                        console.log(
+                            `${obj2[p]} does not exist in obj2, updating`
+                        )
                         obj1[p] = obj2[p]
                     }
                 }
@@ -52,7 +56,8 @@ export async function connectToDatabase(db_name: string, _client: any) {
             await loadState()
 
             // If there is nothing in the database, save the default config.
-            if (config == undefined || config == null) {
+            if (config == undefined) {
+                setConfig({})
             }
 
             await refreshGuilds(_client)

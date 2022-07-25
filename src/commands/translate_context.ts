@@ -5,6 +5,7 @@ import {
 } from 'discord.js'
 import { ContextMenuCommandBuilder } from 'discord.js'
 import { getTranslation } from '../events/reaction.js'
+import { loading } from '../util/tools.js'
 
 export const data = new ContextMenuCommandBuilder()
     .setName('Translate To English')
@@ -13,7 +14,7 @@ export const data = new ContextMenuCommandBuilder()
 export const execute = async (
     interaction: MessageContextMenuCommandInteraction
 ) => {
-    await interaction.deferReply()
+    loading('Translating...', 'Translating to English...', interaction)
 
     const translation = await getTranslation(
         `https://translate.google.com/?sl=auto&tl=en&text=${encodeURIComponent(

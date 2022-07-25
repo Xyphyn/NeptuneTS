@@ -11,6 +11,7 @@ import { v4 as uuid } from 'uuid'
 import { FetchError } from 'node-fetch'
 import { ButtonStyle } from 'discord.js'
 import { InteractionType } from 'discord.js'
+import { loading } from '../util/tools.js'
 
 export const data = new SlashCommandBuilder()
     .setName('fun')
@@ -48,7 +49,7 @@ export const data = new SlashCommandBuilder()
 export const execute = async (interaction: ChatInputCommandInteraction) => {
     switch (interaction.options.getSubcommand()) {
         case 'fact': {
-            await interaction.deferReply()
+            loading('Hold on...', 'Fetching a fact...', interaction)
             const res = await fetch(
                 'https://uselessfacts.jsph.pl/random.json?language=en'
             )
@@ -130,7 +131,11 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
             break
         }
         case 'cat': {
-            const message = await interaction.deferReply()
+            const message = loading(
+                'Hold on...',
+                'Fetching a cat...',
+                interaction
+            )
             const animated = interaction.options.getBoolean('animated')
             const id = uuid()
             const row: any = new ActionRowBuilder().addComponents(
@@ -209,7 +214,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
             break
         }
         case 'reddit': {
-            await interaction.deferReply()
+            loading('Hold on...', 'Grabbing posts...', interaction)
             const subreddit =
                 interaction.options.getString('subreddit') ?? 'memes'
             const res = await fetch(

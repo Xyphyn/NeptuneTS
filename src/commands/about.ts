@@ -14,8 +14,8 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
         .setTitle('Neptune')
         .setDescription(`A general purpose discord bot.`)
         .addFields([
-            { name: 'Version', value: '0.5.0' },
-            { name: 'Branch', value: 'dev' }
+            { name: 'Version', value: '0.6.0' },
+            { name: 'Branch', value: 'main' }
         ])
 
     await interaction.reply({

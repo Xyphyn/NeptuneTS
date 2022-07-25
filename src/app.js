@@ -72,13 +72,13 @@ client.once('ready', async () => {
     })
     await deploy()
     await connectToDatabase('discord', client).then(() => {
-        try {
-            client.user.setActivity(`${config.status.message}`, {
-                type: `${config.status.type}`
-            })
-        } catch (e) {
-            console.log(config), console.log(e)
-        }
+        // try {
+        //     client.user.setActivity(`${config.status.message}`, {
+        //         type: `${config.status.type}`
+        //     })
+        // } catch (e) {
+        //     console.log(config), console.log(e)
+        // }
     })
 
     setLoggingClient(client)

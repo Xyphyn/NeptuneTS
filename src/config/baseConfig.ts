@@ -1,8 +1,12 @@
-import { EmbedBuilder } from 'discord.js'
+import {
+    EmbedBuilder,
+    PermissionFlagsBits,
+    PermissionsBitField
+} from 'discord.js'
 
 export let baseConfig: any = {
     embedSettings: {
-        color: '#0099ff',
+        color: '#bd00ff',
         successColor: '#0eee0e',
         errorColor: '#ff0f0f'
     },
@@ -28,9 +32,13 @@ export let baseConfig: any = {
         dmUser: false,
         warningsUntilMute: 2,
         warningHours: 48,
-        punishmentTime: 30 * 60 * 1000
+        punishmentTime: 60 * 60 * 1000
     },
     translation: {
         enabled: true
+    },
+    polls: {
+        enabled: true,
+        permission: 'SendMessages'
     }
 }
