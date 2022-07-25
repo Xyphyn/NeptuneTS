@@ -5,6 +5,10 @@ import { REST } from '@discordjs/rest'
 import { Routes } from 'discord-api-types/v9'
 import fs from 'fs'
 import { client } from './app.js'
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 export async function deploy() {
     return new Promise(async (resolve, reject) => {
@@ -17,24 +21,22 @@ export async function deploy() {
         ).start()
         let commands = []
         const commandFiles = fs
-            .readdirSync('./src/commands')
+            .readdirSync(`${__dirname}/commands`)
             .filter((file) => file.endsWith('.js'))
 
         for (const file of commandFiles) {
             const command = await import(`./commands/${file}`)
             commands.push(command.data.toJSON())
-
-            console.log(command)
         }
 
-        const rest = new REST({ version: '10' }).setToken(process.env.TOKEN)
+        const rest = new REST({ version: '10' }).setToken(process.env.TOKEN!)
 
         const guilds = client.guilds.cache.map((guild) => guild.id)
         let counter = guilds.length
         for (const guild of guilds) {
             rest.put(
                 Routes.applicationGuildCommands(
-                    process.env.DEV_CLIENT_ID,
+                    process.env.DEV_CLIENT_ID!,
                     guild
                 ),
                 { body: commands }
@@ -47,6 +49,6 @@ export async function deploy() {
             if (counter <= 0)
                 spinner.success({ text: chalk.green(`Deployed commands`) })
         }
-        resolve()
+        resolve(null)
     })
 }

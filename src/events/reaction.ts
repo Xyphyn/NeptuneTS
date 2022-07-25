@@ -1,14 +1,15 @@
-import { EmbedBuilder } from 'discord.js'
+import { EmbedBuilder, MessageReaction } from 'discord.js'
 import fetch from 'node-fetch'
 import puppeteer from 'puppeteer'
 import { getConfig } from '../config/config.js'
+import { globalConfig } from '../config/globalConfig.js'
 
 export const name = 'messageReactionAdd'
 export const once = false
 
 const browser = await puppeteer.launch({ args: ['--no-sandbox'] })
 
-export const getTranslation = async (url) => {
+export const getTranslation = async (url: string) => {
     return new Promise(async (resolve, reject) => {
         const page = await browser.newPage()
         await page.goto(`${url}`)
@@ -21,26 +22,33 @@ export const getTranslation = async (url) => {
             resolve('Error getting translation')
             return
         }
-        let text = await page.evaluate((element) => element.innerText, element)
+        let text = await page.evaluate(
+            (element: any) => element!.innerText,
+            element
+        )
         page.close()
         resolve(text)
     })
 }
 
-const translate = async (lang, reaction, content) => {
+const translate = async (
+    lang: string,
+    reaction: MessageReaction,
+    content: string
+) => {
     const flag = reaction.emoji.name
-    const language = languages[flag]
+    const language = languages[flag!]
     const languageName = languageNames[language]
 
     const embed = new EmbedBuilder()
         .setTitle('Translation')
         .setDescription(
-            `<a:WindowsLoading:998707398267130028> Translating to **${languageName}**...`
+            `${globalConfig.loadingEmoji} Translating to **${languageName}**...`
         )
 
     if (reaction.message.guild != undefined)
         embed.setColor(getConfig(reaction.message.guild.id).embedSettings.color)
-    else embed.setColor(0x0099ff)
+    else embed.setColor(globalConfig.embedColor)
 
     const msg = await reaction.message.reply({
         embeds: [embed]
@@ -56,14 +64,14 @@ const translate = async (lang, reaction, content) => {
         .setDescription(`${translation}`)
         .setFooter({ text: `Translated to ${flag} ${languageName}` })
         .setAuthor({
-            name: reaction.message.author.username,
-            iconURL: reaction.message.author.avatarURL()
+            name: reaction.message.author!.username,
+            iconURL: reaction.message.author!.avatarURL()!
         })
 
     msg.edit({ embeds: [embed] })
 }
 
-const languages = {
+const languages: any = {
     '🇬🇧': 'en',
     '🇺🇸': 'en',
     '🇪🇸': 'es',
@@ -82,7 +90,7 @@ const languages = {
     '🇬🇷': 'el'
 }
 
-export const languageNames = {
+export const languageNames: any = {
     en: 'English',
     es: 'Spanish',
     fr: 'French',
@@ -100,7 +108,7 @@ export const languageNames = {
     el: 'Greek'
 }
 
-export const execute = async (reaction) => {
+export const execute = async (reaction: MessageReaction) => {
     // if (!(getConfig(reaction.message.guild.id).translation.enabled)) return
     if (reaction.partial) await reaction.fetch()
     await reaction.message.fetch()
@@ -118,7 +126,7 @@ export const execute = async (reaction) => {
         if (reaction.message.content == '') return
     }
 
-    if (reaction.emoji.name in languages) {
-        translate(languages[reaction.emoji.name], reaction, content)
+    if (reaction!.emoji.name! in languages) {
+        translate(languages[reaction.emoji.name!], reaction, content!)
     }
 }

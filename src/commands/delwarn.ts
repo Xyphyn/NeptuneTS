@@ -1,6 +1,6 @@
-import { PermissionsBitField } from 'discord.js'
+import { ChatInputCommandInteraction, PermissionsBitField } from 'discord.js'
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
-import { config } from '../config/config.js'
+import { config, getConfig } from '../config/config.js'
 import { dbConfig } from '../database/dbConfig.js'
 import { deleteFromDatabase } from '../database/mongodb.js'
 import { noPermission } from '../managers/errorManager.js'
@@ -16,22 +16,14 @@ export const data = new SlashCommandBuilder()
             .setRequired(true)
     )
 
-export const execute = async (interaction, client) => {
-    if (
-        !interaction.member.permissions.has(
-            PermissionsBitField.Flags.ModerateMembers
-        )
-    ) {
-        interaction.reply({
-            embeds: [noPermission('Moderate Members')]
-        })
-        return
-    }
+export const permissions = PermissionsBitField.Flags.ModerateMembers
+export const permissionsString = 'Moderate Members'
 
+export const execute = async (interaction: ChatInputCommandInteraction) => {
     const uuid = await interaction.options.getString('uuid')
     deleteFromDatabase(dbConfig.warningCollection, { id: uuid })
     const embed = new EmbedBuilder()
-        .setColor(config[interaction.guild.id].embedSettings.errorColor)
+        .setColor(getConfig(interaction).embedSettings.errorColor)
         .addFields([
             { name: 'Warning deleted', value: `${uuid}`, inline: true },
             {
@@ -41,13 +33,13 @@ export const execute = async (interaction, client) => {
             }
         ])
     const embed2 = new EmbedBuilder()
-        .setColor(config[interaction.guild.id].embedSettings.errorColor)
+        .setColor(getConfig(interaction).embedSettings.errorColor)
         .setTitle('Warning deleted')
         .setDescription(
             `<:WindowsRecycleBin:824380487920910348> Warning of UUID \`${uuid}\` has been deleted.`
         )
 
-    logEmbed(embed2, interaction.guild)
+    logEmbed(embed2, interaction.guild!)
     await interaction.reply({
         embeds: [embed2]
     })

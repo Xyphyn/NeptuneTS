@@ -4,12 +4,14 @@ import {
     ActionRowBuilder,
     SlashCommandBuilder,
     ButtonBuilder,
-    EmbedBuilder
+    EmbedBuilder,
+    ChatInputCommandInteraction
 } from 'discord.js'
 import { v4 as uuid } from 'uuid'
 import { FetchError } from 'node-fetch'
 import { ButtonStyle } from 'discord.js'
 import { InteractionType } from 'discord.js'
+import { loading } from '../util/tools.js'
 
 export const data = new SlashCommandBuilder()
     .setName('fun')
@@ -44,14 +46,14 @@ export const data = new SlashCommandBuilder()
             )
     )
 
-export const execute = async (interaction) => {
+export const execute = async (interaction: ChatInputCommandInteraction) => {
     switch (interaction.options.getSubcommand()) {
         case 'fact': {
-            await interaction.deferReply()
+            loading('Hold on...', 'Fetching a fact...', interaction)
             const res = await fetch(
                 'https://uselessfacts.jsph.pl/random.json?language=en'
             )
-            const json = await res.json()
+            const json: any = await res.json()
             const embed = new EmbedBuilder()
                 .setTitle('Useless Fact')
                 .setDescription(
@@ -60,7 +62,7 @@ export const execute = async (interaction) => {
                     }`
                 )
                 .setURL(json.source_url)
-                .setColor(config[interaction.guild.id].embedSettings.color)
+                .setColor(getConfig(interaction).embedSettings.color)
 
             await interaction.editReply({
                 embeds: [embed]
@@ -69,7 +71,7 @@ export const execute = async (interaction) => {
             break
         }
         case 'coinflip': {
-            const row = new ActionRowBuilder().addComponents(
+            const row: any = new ActionRowBuilder().addComponents(
                 new ButtonBuilder()
                     .setCustomId('coinflip-heads')
                     .setLabel('Heads 👨')
@@ -91,7 +93,7 @@ export const execute = async (interaction) => {
             })
 
             const collector =
-                interaction.channel.createMessageComponentCollector({
+                interaction.channel!.createMessageComponentCollector({
                     filter: async (int) => {
                         try {
                             const reply = await interaction.fetchReply()
@@ -116,7 +118,7 @@ export const execute = async (interaction) => {
                 embed
                     .setTitle(`${response}!`)
                     .setDescription(win ? `You won! 🥳` : `You lost! ☹️`)
-                    .setFooter({ text: null })
+                    .setFooter(null)
 
                 interaction.editReply({
                     embeds: [embed],
@@ -129,10 +131,14 @@ export const execute = async (interaction) => {
             break
         }
         case 'cat': {
-            const message = await interaction.deferReply()
+            const message = loading(
+                'Hold on...',
+                'Fetching a cat...',
+                interaction
+            )
             const animated = interaction.options.getBoolean('animated')
             const id = uuid()
-            const row = new ActionRowBuilder().addComponents(
+            const row: any = new ActionRowBuilder().addComponents(
                 new ButtonBuilder()
                     .setCustomId(id)
                     .setLabel('Another! 🔄️')
@@ -144,7 +150,7 @@ export const execute = async (interaction) => {
                     ? 'https://api.thecatapi.com/v1/images/search?mime_types=gif'
                     : 'https://cataas.com/cat?json=true'
                 const res = await fetch(url)
-                const json = await res.json()
+                const json: any = await res.json()
 
                 const embed = new EmbedBuilder()
                     .setTitle(
@@ -168,7 +174,7 @@ export const execute = async (interaction) => {
             getCat()
 
             const collector =
-                interaction.channel.createMessageComponentCollector({
+                interaction.channel!.createMessageComponentCollector({
                     filter: async (int) => {
                         try {
                             const reply = await interaction.fetchReply()
@@ -208,24 +214,24 @@ export const execute = async (interaction) => {
             break
         }
         case 'reddit': {
-            await interaction.deferReply()
+            loading('Hold on...', 'Grabbing posts...', interaction)
             const subreddit =
                 interaction.options.getString('subreddit') ?? 'memes'
             const res = await fetch(
                 `https://www.reddit.com/r/${subreddit}.json`
             )
-            let json
+            let json: any
             try {
                 json = await res.json()
             } catch (e) {
-                throw new FetchError('Subreddit not found.')
+                throw new FetchError('Subreddit not found.', 'FetchError')
             }
             if (res.status === 404 || json.data === undefined)
-                throw new FetchError('Subreddit not found.')
+                throw new FetchError('Subreddit not found.', 'FetchError')
             const nextId = 'reddit-next'
             const prevId = 'reddit-prev'
             let index = -1
-            const row = new ActionRowBuilder().addComponents(
+            const row: any = new ActionRowBuilder().addComponents(
                 new ButtonBuilder()
                     .setCustomId('reddit-next')
                     .setLabel('Next')
@@ -236,7 +242,7 @@ export const execute = async (interaction) => {
                     .setStyle(ButtonStyle.Secondary)
             )
 
-            const refresh = async (index) => {
+            const refresh = async (index: number) => {
                 return new Promise(async (resolve, reject) => {
                     const res = await fetch(
                         `https://www.reddit.com/r/${subreddit}.json?limit=${
@@ -244,11 +250,11 @@ export const execute = async (interaction) => {
                         }`
                     )
                     json = await res.json()
-                    resolve()
+                    resolve(null)
                 })
             }
 
-            const update = async (next) => {
+            const update = async (next: boolean) => {
                 next ? index++ : index--
 
                 if (
@@ -299,7 +305,7 @@ export const execute = async (interaction) => {
             }
 
             const collector =
-                interaction.channel.createMessageComponentCollector({
+                interaction.channel!.createMessageComponentCollector({
                     filter: async (int) => {
                         try {
                             const reply = await interaction.fetchReply()
@@ -323,10 +329,10 @@ export const execute = async (interaction) => {
                     time: 900000
                 })
 
-            const disable = (next, prev) => {
+            const disable = (next: boolean, prev: boolean) => {
                 // clear collector if nothing collected within 1 minute
                 if (next && prev) collector.stop()
-                const row = new ActionRowBuilder().addComponents(
+                const row: any = new ActionRowBuilder().addComponents(
                     new ButtonBuilder()
                         .setCustomId('reddit-next')
                         .setLabel('Next')

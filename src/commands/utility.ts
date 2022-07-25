@@ -1,5 +1,9 @@
-import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
-import { config, getConfig } from '../config/config.js'
+import {
+    ChatInputCommandInteraction,
+    EmbedBuilder,
+    SlashCommandBuilder
+} from 'discord.js'
+import { config, getColor, getConfig } from '../config/config.js'
 
 export const data = new SlashCommandBuilder()
     .setName('utility')
@@ -72,7 +76,10 @@ export const data = new SlashCommandBuilder()
             )
     )
 
-export const execute = async (interaction, client) => {
+export const execute = async (
+    interaction: ChatInputCommandInteraction,
+    client: any
+) => {
     const subcommand = interaction.options.getSubcommand()
     switch (subcommand) {
         case 'embed': {
@@ -83,7 +90,7 @@ export const execute = async (interaction, client) => {
             const colorCheck = interaction.options.getString('color') ?? ''
             const color = colorCheck.match(hexRegex)
                 ? colorCheck
-                : config[interaction.guild.id].embedSettings.color
+                : getConfig(interaction).embedSettings.color
 
             const embed = new EmbedBuilder()
                 .setTitle(title)
@@ -120,16 +127,20 @@ export const execute = async (interaction, client) => {
                 type: type
             }
 
+            const color = getColor(interaction)
+
             const embed = new EmbedBuilder()
                 .setTitle(`Status set`)
                 .setDescription(
                     `<:WindowsSuccess:977721596468928533> Status was set to \`${type} ${message}\``
                 )
-                .setColor(`${getConfig(interaction).embedSettings.color}`)
+                .setColor(color)
 
             interaction.reply({
                 embeds: [embed]
             })
+
+            break
         }
     }
 }

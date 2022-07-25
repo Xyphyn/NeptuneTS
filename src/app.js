@@ -7,22 +7,24 @@ import {
     Collection,
     GatewayIntentBits,
     EmbedBuilder,
-    Partials
+    Partials,
+    MessageCollector,
+    PermissionFlagsBits
 } from 'discord.js'
 import chalk from 'chalk'
 import { config as dotenv_config } from 'dotenv'
 import fs from 'fs'
-import { embedSettings } from './config/embeds.js'
 import { deploy } from './deploy-commands.js'
-import { connectToDatabase, db, refreshGuilds } from './database/mongodb.js'
+import { connectToDatabase, refreshGuilds } from './database/mongodb.js'
 import { setLoggingClient } from './managers/logManager.js'
 import { config } from './config/config.js'
 import { noPermission } from './managers/errorManager.js'
-import { MessageCollector } from 'discord.js'
-import { PermissionsBitField } from 'discord.js'
-import { PermissionFlagsBits } from 'discord.js'
+import path from 'path'
+import { fileURLToPath } from 'url'
 
-await dotenv_config()
+dotenv_config()
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 export const client = new Client({
     partials: [Partials.Channel, Partials.Message, Partials.Reaction],
@@ -40,19 +42,18 @@ export const client = new Client({
 })
 
 client.commands = new Collection()
-console.log(__dirname)
 const commandFiles = fs
-    .readdirSync('./src/commands')
+    .readdirSync(`${__dirname}/commands`)
     .filter((file) => file.endsWith('.js'))
 
 for (const file of commandFiles) {
-    const command = import(`./commands/${file}`).then((module) => {
+    import(`./commands/${file}`).then((module) => {
         client.commands.set(module.data.name, module)
     })
 }
 
 const eventFiles = fs
-    .readdirSync('./src/events')
+    .readdirSync(`${__dirname}/events`)
     .filter((file) => file.endsWith('.js'))
 
 for (const file of eventFiles) {
@@ -71,13 +72,13 @@ client.once('ready', async () => {
     })
     await deploy()
     await connectToDatabase('discord', client).then(() => {
-        try {
-            client.user.setActivity(`${config.status.message}`, {
-                type: `${config.status.type}`
-            })
-        } catch (e) {
-            console.log(config), console.log(e)
-        }
+        // try {
+        //     client.user.setActivity(`${config.status.message}`, {
+        //         type: `${config.status.type}`
+        //     })
+        // } catch (e) {
+        //     console.log(config), console.log(e)
+        // }
     })
 
     setLoggingClient(client)
@@ -127,7 +128,7 @@ client.on('interactionCreate', async (interaction) => {
         const stack = error.message
 
         const embed = new EmbedBuilder()
-            .setColor(embedSettings.errorColor)
+            .setColor('Red')
             .setTitle('Error')
             .setDescription(
                 `<:BSOD:984972563358814228> \`${error.name}\` occured during execution!`
@@ -154,7 +155,7 @@ client.on('interactionCreate', async (interaction) => {
             collector.on('collect', (message) => {
                 if (message.content === 'stack pls') {
                     const stackEmbed = new EmbedBuilder()
-                        .setColor(embedSettings.errorColor)
+                        .setColor('Red')
                         .setTitle('Full Stack')
                         .setDescription(`\`\`\`js${stack}\`\`\``)
                     message.channel.send({ embeds: [stackEmbed] })
@@ -172,7 +173,7 @@ client.on('interactionCreate', async (interaction) => {
                 collector.on('collect', (message) => {
                     if (message.content === 'stack pls') {
                         const stackEmbed = new EmbedBuilder()
-                            .setColor(embedSettings.errorColor)
+                            .setColor('Red')
                             .setTitle('Full Stack')
                             .setDescription(`\`\`\`js${stack}\`\`\``)
                         message.channel.send({ embeds: [stackEmbed] })
@@ -189,7 +190,7 @@ client.on('interactionCreate', async (interaction) => {
                 collector.on('collect', (message) => {
                     if (message.content === 'stack pls') {
                         const stackEmbed = new EmbedBuilder()
-                            .setColor(embedSettings.errorColor)
+                            .setColor('Red')
                             .setTitle('Full Stack')
                             .setDescription(`\`\`\`js${stack}\`\`\``)
                         message.channel.send({ embeds: [stackEmbed] })

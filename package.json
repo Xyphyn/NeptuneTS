@@ -1,10 +1,13 @@
 {
   "name": "neptune",
-  "version": "0.3.0",
-  "description": "Cliptok but worse and in discord.js",
+  "version": "0.6.0",
+  "description": "A general purpose discord bot.",
   "main": "src/app.js",
   "scripts": {
-    "start": "node src/app.js"
+    "dev": "node src/app.js",
+    "start": "node dist/app.js",
+    "tsc": "tsc",
+    "postinstall": "tsc"
   },
   "type": "module",
   "author": "Xylight",
@@ -15,18 +18,18 @@
     "discord-api-types": "^0.36.2",
     "discord.js": "^14.0.2",
     "dotenv": "^16.0.0",
+    "jimp": "^0.16.1",
     "mongodb": "^4.6.0",
     "ms": "^2.1.3",
     "nanospinner": "^1.0.0",
     "node-fetch": "^3.2.4",
     "puppeteer": "^15.4.0",
-    "tmp": "^0.2.1",
     "ts-node": "^10.9.1",
-    "tsc": "^2.0.4",
     "typescript": "^4.7.4",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@types/tmp": "^0.2.3"
+    "@types/ms": "^0.7.31",
+    "@types/uuid": "^8.3.4"
   }
 }
