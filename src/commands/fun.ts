@@ -49,7 +49,7 @@ export const data = new SlashCommandBuilder()
 export const execute = async (interaction: ChatInputCommandInteraction) => {
     switch (interaction.options.getSubcommand()) {
         case 'fact': {
-            loading('Hold on...', 'Fetching a fact...', interaction)
+            await loading('Hold on...', 'Fetching a fact...', interaction)
             const res = await fetch(
                 'https://uselessfacts.jsph.pl/random.json?language=en'
             )
@@ -131,7 +131,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
             break
         }
         case 'cat': {
-            const message = loading(
+            const message = await loading(
                 'Hold on...',
                 'Fetching a cat...',
                 interaction
@@ -214,7 +214,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
             break
         }
         case 'reddit': {
-            loading('Hold on...', 'Grabbing posts...', interaction)
+            await loading('Hold on...', 'Grabbing posts...', interaction)
             const subreddit =
                 interaction.options.getString('subreddit') ?? 'memes'
             const res = await fetch(
@@ -226,7 +226,11 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
             } catch (e) {
                 throw new FetchError('Subreddit not found.', 'FetchError')
             }
-            if (res.status === 404 || json.data === undefined)
+            if (
+                res.status === 404 ||
+                json.data === undefined ||
+                json.data.children[0] === undefined
+            )
                 throw new FetchError('Subreddit not found.', 'FetchError')
             const nextId = 'reddit-next'
             const prevId = 'reddit-prev'
@@ -346,23 +350,35 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
                 )
 
                 try {
-                    interaction.editReply({
-                        components: [row]
-                    })
+                    interaction
+                        .editReply({
+                            components: [row]
+                        })
+                        .catch((err) => {
+                            // ignore
+                        })
                 } catch (e) {
                     // message was deleted
                 }
             }
 
             let timeout = setTimeout(() => {
-                disable(true, true)
+                try {
+                    disable(true, true)
+                } catch (e) {
+                    /* ignore */
+                }
             }, 30000)
 
             collector.on('collect', (btnInt) => {
                 clearTimeout(timeout)
 
                 timeout = setTimeout(() => {
-                    disable(true, true)
+                    try {
+                        disable(true, true)
+                    } catch (e) {
+                        /* ignore */
+                    }
                 }, 30000)
 
                 if (btnInt.customId === nextId) {

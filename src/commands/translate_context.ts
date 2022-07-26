@@ -15,7 +15,7 @@ export const data = new ContextMenuCommandBuilder()
 export const execute = async (
     interaction: MessageContextMenuCommandInteraction
 ) => {
-    loading('Translating...', 'Translating to English...', interaction)
+    await loading('Translating...', 'Translating to English...', interaction)
 
     const translation = await getTranslation(
         `https://translate.google.com/?sl=auto&tl=en&text=${encodeURIComponent(

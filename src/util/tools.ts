@@ -8,7 +8,7 @@ import {
 import { getConfig } from '../config/config.js'
 import { globalConfig } from '../config/globalConfig.js'
 
-export const loading = (
+export const loading = async (
     title: string,
     desc: string,
     interaction:
@@ -20,7 +20,7 @@ export const loading = (
         .setDescription(`${globalConfig.loadingEmoji} ${desc}`)
         .setColor(getConfig(interaction).embedSettings.color)
 
-    interaction.reply({
+    await interaction.reply({
         embeds: [embed]
     })
 }
