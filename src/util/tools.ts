@@ -1,5 +1,6 @@
 import {
     ChatInputCommandInteraction,
+    ContextMenuCommandInteraction,
     EmbedBuilder,
     Guild,
     Interaction,
@@ -32,4 +33,14 @@ export const loadingEmbed = (title: string, desc: string) => {
         .setDescription(`${globalConfig.loadingEmoji} ${desc}`)
         .setColor(color)
     return embed
+}
+
+export const embed = (
+    title: string,
+    desc: string,
+    guildColor: boolean,
+    interaction: ChatInputCommandInteraction | ContextMenuCommandInteraction
+) => {
+    const embed = new EmbedBuilder().setTitle(title).setDescription(desc)
+    if (guildColor) embed.setColor(getConfig(interaction).embedSettings.color)
 }

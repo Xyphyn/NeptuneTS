@@ -1,9 +1,16 @@
 import {
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonInteraction,
+    ButtonStyle,
     ChatInputCommandInteraction,
     EmbedBuilder,
+    Interaction,
+    MessageComponentInteraction,
     SlashCommandBuilder
 } from 'discord.js'
 import { config, getColor, getConfig } from '../config/config.js'
+import { error } from '../managers/errorManager.js'
 
 export const data = new SlashCommandBuilder()
     .setName('utility')
@@ -75,6 +82,11 @@ export const data = new SlashCommandBuilder()
                     .setRequired(true)
             )
     )
+    .addSubcommand((subcommand) =>
+        subcommand
+            .setName('calculator')
+            .setDescription('A calculator. Why did I waste my time on this')
+    )
 
 export const execute = async (
     interaction: ChatInputCommandInteraction,
@@ -141,6 +153,157 @@ export const execute = async (
             })
 
             break
+        }
+        case 'calculator': {
+            const rows = [
+                new ActionRowBuilder<ButtonBuilder>().addComponents(
+                    new ButtonBuilder()
+                        .setCustomId('calc-clear')
+                        .setStyle(ButtonStyle.Danger)
+                        .setLabel('C'),
+                    new ButtonBuilder()
+                        .setCustomId('calc-openparenth')
+                        .setStyle(ButtonStyle.Success)
+                        .setLabel('(')
+                        .setDisabled(true),
+                    new ButtonBuilder()
+                        .setCustomId('calc-closeparenth')
+                        .setStyle(ButtonStyle.Success)
+                        .setLabel(')')
+                        .setDisabled(true),
+                    new ButtonBuilder()
+                        .setCustomId('calc-/')
+                        .setLabel('/')
+                        .setStyle(ButtonStyle.Success)
+                ),
+                new ActionRowBuilder<ButtonBuilder>().addComponents(
+                    new ButtonBuilder()
+                        .setCustomId('calc-7')
+                        .setStyle(ButtonStyle.Primary)
+                        .setLabel('7'),
+                    new ButtonBuilder()
+                        .setCustomId('calc-8')
+                        .setStyle(ButtonStyle.Primary)
+                        .setLabel('8'),
+                    new ButtonBuilder()
+                        .setCustomId('calc-9')
+                        .setStyle(ButtonStyle.Primary)
+                        .setLabel('9'),
+                    new ButtonBuilder()
+                        .setCustomId('calc-*')
+                        .setLabel('*')
+                        .setStyle(ButtonStyle.Success)
+                ),
+                new ActionRowBuilder<ButtonBuilder>().addComponents(
+                    new ButtonBuilder()
+                        .setCustomId('calc-4')
+                        .setStyle(ButtonStyle.Primary)
+                        .setLabel('4'),
+                    new ButtonBuilder()
+                        .setCustomId('calc-5')
+                        .setStyle(ButtonStyle.Primary)
+                        .setLabel('5'),
+                    new ButtonBuilder()
+                        .setCustomId('calc-6')
+                        .setStyle(ButtonStyle.Primary)
+                        .setLabel('6'),
+                    new ButtonBuilder()
+                        .setCustomId('calc--')
+                        .setLabel('-')
+                        .setStyle(ButtonStyle.Success)
+                ),
+                new ActionRowBuilder<ButtonBuilder>().addComponents(
+                    new ButtonBuilder()
+                        .setCustomId('calc-1')
+                        .setStyle(ButtonStyle.Primary)
+                        .setLabel('1'),
+                    new ButtonBuilder()
+                        .setCustomId('calc-2')
+                        .setStyle(ButtonStyle.Primary)
+                        .setLabel('2'),
+                    new ButtonBuilder()
+                        .setCustomId('calc-3')
+                        .setStyle(ButtonStyle.Primary)
+                        .setLabel('3'),
+                    new ButtonBuilder()
+                        .setCustomId('calc-+')
+                        .setLabel('+')
+                        .setStyle(ButtonStyle.Success)
+                ),
+                new ActionRowBuilder<ButtonBuilder>().addComponents(
+                    new ButtonBuilder()
+                        .setCustomId('calc-positive')
+                        .setStyle(ButtonStyle.Secondary)
+                        .setLabel(' ')
+                        .setDisabled(true),
+                    new ButtonBuilder()
+                        .setCustomId('calc-0')
+                        .setStyle(ButtonStyle.Primary)
+                        .setLabel('0'),
+                    new ButtonBuilder()
+                        .setCustomId('calc-.')
+                        .setStyle(ButtonStyle.Primary)
+                        .setLabel('.'),
+                    new ButtonBuilder()
+                        .setCustomId('calc-=')
+                        .setLabel('=')
+                        .setStyle(ButtonStyle.Success)
+                )
+            ]
+
+            let expression = '0'
+
+            const embed = new EmbedBuilder()
+                .setDescription(`\`\`\`js\n${expression}\n\`\`\``)
+                .setColor(0x2f3136)
+
+            await interaction.reply({
+                embeds: [embed],
+                components: rows
+            })
+
+            const collector =
+                interaction.channel?.createMessageComponentCollector({
+                    filter: async (int: MessageComponentInteraction) => {
+                        const reply = await interaction.fetchReply()
+                        return int.message.id === reply.id
+                    }
+                })!
+
+            collector.on('collect', async (int: ButtonInteraction) => {
+                if (expression.includes('=')) {
+                    expression = ''
+                }
+                const expr = int.customId.replace('calc-', '')
+                const regex = '([-+*/.]|[-+]?[0-9])'
+                if (expr.match(regex)) {
+                    if (expression == '0') expression = ''
+                    expression += expr
+                } else if (expr == '=') {
+                    try {
+                        expression += ` = ${eval(expression)}`
+                    } catch (e) {
+                        await int.reply({
+                            ephemeral: true,
+                            embeds: [
+                                error(
+                                    'Expression evaluation failed: octals are not allowed. Did you accidentally precede a number with a 0?'
+                                )
+                            ]
+                        })
+                        return
+                    }
+                } else if (expr == 'clear') {
+                    expression = '0'
+                }
+
+                embed.setDescription(`\`\`\`js\n${expression}\n\`\`\``)
+                const msg = await interaction.fetchReply()
+                msg.edit({
+                    embeds: [embed]
+                })
+                int.deferUpdate().catch((e) => {})
+            })
         }
     }
 }
