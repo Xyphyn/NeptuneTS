@@ -94,9 +94,7 @@ client.on('guildCreate', async () => {
 })
 
 client.on('error', async (err) => {
-    const user = await client.users.fetch('735626570399481878')
-    user.send(`An error occurred! \`${err}\``)
-    console.log(err)
+    sendErrorDM('Error', err)
 })
 
 client.on('interactionCreate', async (interaction) => {
