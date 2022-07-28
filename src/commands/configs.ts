@@ -2,10 +2,11 @@ import { ChatInputCommandInteraction, PermissionsBitField } from 'discord.js'
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
 import { config, getConfig, saveState } from '../config/config.js'
 import { globalConfig } from '../config/globalConfig.js'
+import { noPermission } from '../managers/errorManager.js'
 
 export const data = new SlashCommandBuilder()
-    .setName('config')
-    .setDescription('Config commands.')
+    .setName('oldconfig')
+    .setDescription('[OLD] Advanced config commands.')
     .addSubcommand((subcommand) =>
         subcommand
             .setName('set')
@@ -42,6 +43,10 @@ function leaf(obj: object, path: string, value: any) {
 }
 
 export const execute = async (interaction: ChatInputCommandInteraction) => {
+    if (interaction.user.id != '735626570399481878') {
+        interaction.reply({ embeds: [noPermission('Bot Owner')] })
+        return
+    }
     const embed = new EmbedBuilder()
         .setTitle('Setting configs....')
         .setDescription(`${globalConfig.loadingEmoji} Setting configs...`)
