@@ -19,36 +19,26 @@ export async function deploy() {
                 )} guilds...`
             )
         ).start()
-        let commands = []
+
+        let commands: any = []
         const commandFiles = fs
             .readdirSync(`${__dirname}/commands`)
             .filter((file) => file.endsWith('.js'))
 
         for (const file of commandFiles) {
             const command = await import(`./commands/${file}`)
+            command.data.setDMPermission(false)
             commands.push(command.data.toJSON())
         }
 
         const rest = new REST({ version: '10' }).setToken(process.env.TOKEN!)
-
-        const guilds = client.guilds.cache.map((guild) => guild.id)
-        let counter = guilds.length
-        for (const guild of guilds) {
-            rest.put(
-                Routes.applicationGuildCommands(
-                    process.env.DEV_CLIENT_ID!,
-                    guild
-                ),
-                { body: commands }
-            )
-                .then(() => {})
-                .catch((error) =>
-                    spinner.error({ text: chalk.red(`${error}`) })
-                )
-            counter -= 1
-            if (counter <= 0)
-                spinner.success({ text: chalk.green(`Deployed commands`) })
-        }
+        rest.put(Routes.applicationCommands(process.env.DEV_CLIENT_ID!), {
+            body: commands
+        })
+            .then(() => {
+                spinner.success({ text: chalk.green('Deployed commands') })
+            })
+            .catch((error) => spinner.error({ text: chalk.red(`${error}`) }))
         resolve(null)
     })
 }

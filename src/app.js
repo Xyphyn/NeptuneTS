@@ -96,6 +96,10 @@ client.on('error', async (err) => {
 })
 
 client.on('interactionCreate', async (interaction) => {
+    if (interaction.channel.isDMBased()) {
+        interaction.reply('Commands are disabled in direct messages.')
+        return
+    }
     const command = client.commands.get(interaction.commandName)
 
     if (!command) return
