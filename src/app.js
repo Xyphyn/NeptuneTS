@@ -86,9 +86,17 @@ client.once('ready', async () => {
     }, 30000)
 })
 
-client.on('guildCreate', async () => {
+client.on('guildCreate', async (guild) => {
     await refreshGuilds(client)
-    await deploy()
+
+    const xy = await client.users.fetch('735626570399481878')
+    const embed = new EmbedBuilder()
+        .setTitle('New guild')
+        .setDescription(`Neptune was added to a new guild! **${guild.name}**`)
+        .setColor(0xbd00ff)
+    xy.send({
+        embeds: [embed]
+    })
 })
 
 client.on('error', async (err) => {
