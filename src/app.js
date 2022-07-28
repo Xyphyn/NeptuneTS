@@ -9,7 +9,9 @@ import {
     EmbedBuilder,
     Partials,
     MessageCollector,
-    PermissionFlagsBits
+    PermissionFlagsBits,
+    Status,
+    ActivityType
 } from 'discord.js'
 import chalk from 'chalk'
 import { config as dotenv_config } from 'dotenv'
@@ -72,13 +74,9 @@ client.once('ready', async () => {
     })
     await deploy()
     await connectToDatabase('discord', client).then(() => {
-        // try {
-        //     client.user.setActivity(`${config.status.message}`, {
-        //         type: `${config.status.type}`
-        //     })
-        // } catch (e) {
-        //     console.log(config), console.log(e)
-        // }
+        client.user.setActivity(`cat /dev/sda | aplay`, {
+            type: ActivityType.Listening
+        })
     })
 
     setLoggingClient(client)
@@ -121,7 +119,9 @@ client.on('interactionCreate', async (interaction) => {
             'Unexpected token < in JSON at position 0':
                 'You might have input an invalid/inactive subreddit.',
             'Subreddit not found.': 'That subreddit does not exist.',
-            'Received one or more errors': "That user can't be banned."
+            'Received one or more errors': "That user can't be banned.",
+            'Could not decode image data':
+                'That is not an image or the image type is not supported.'
         }
         const stack = error.message
 

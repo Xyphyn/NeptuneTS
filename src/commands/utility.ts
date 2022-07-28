@@ -1,5 +1,6 @@
 import {
     ActionRowBuilder,
+    ActivityType,
     ButtonBuilder,
     ButtonInteraction,
     ButtonStyle,
@@ -54,24 +55,24 @@ export const data = new SlashCommandBuilder()
                     .setRequired(true)
                     .setChoices(
                         {
-                            name: 'Competing',
-                            value: 'COMPETING'
+                            name: 'Competing in',
+                            value: `${ActivityType.Competing}`
                         },
                         {
-                            name: 'Listening',
-                            value: 'LISTENING'
+                            name: 'Listening to',
+                            value: `${ActivityType.Listening}`
                         },
                         {
                             name: 'Watching',
-                            value: 'WATCHING'
+                            value: `${ActivityType.Watching}`
                         },
                         {
                             name: 'Streaming',
-                            value: 'STREAMING'
+                            value: `${ActivityType.Streaming}`
                         },
                         {
                             name: 'Playing',
-                            value: 'PLAYING'
+                            value: `${ActivityType.Playing}`
                         }
                     )
             )
@@ -130,21 +131,16 @@ export const execute = async (
         }
         case 'status': {
             const message = interaction.options.getString('status-message')
-            const type = interaction.options.getString('status-type')
+            const type = interaction.options.getString('status-type')!
 
-            await client.user.setActivity(message, { type: type })
-
-            config.status = {
-                message: message,
-                type: type
-            }
+            await client.user.setActivity(message, { type: parseInt(type) })
 
             const color = getColor(interaction)
 
             const embed = new EmbedBuilder()
                 .setTitle(`Status set`)
                 .setDescription(
-                    `<:WindowsSuccess:977721596468928533> Status was set to \`${type} ${message}\``
+                    `<:WindowsSuccess:977721596468928533> Status was set`
                 )
                 .setColor(color)
 
@@ -162,15 +158,13 @@ export const execute = async (
                         .setStyle(ButtonStyle.Danger)
                         .setLabel('C'),
                     new ButtonBuilder()
-                        .setCustomId('calc-openparenth')
+                        .setCustomId('calc-(')
                         .setStyle(ButtonStyle.Success)
-                        .setLabel('(')
-                        .setDisabled(true),
+                        .setLabel('('),
                     new ButtonBuilder()
-                        .setCustomId('calc-closeparenth')
+                        .setCustomId('calc-)')
                         .setStyle(ButtonStyle.Success)
-                        .setLabel(')')
-                        .setDisabled(true),
+                        .setLabel(')'),
                     new ButtonBuilder()
                         .setCustomId('calc-/')
                         .setLabel('/')
@@ -232,10 +226,9 @@ export const execute = async (
                 ),
                 new ActionRowBuilder<ButtonBuilder>().addComponents(
                     new ButtonBuilder()
-                        .setCustomId('calc-positive')
+                        .setCustomId('calc-←')
                         .setStyle(ButtonStyle.Secondary)
-                        .setLabel(' ')
-                        .setDisabled(true),
+                        .setLabel('←'),
                     new ButtonBuilder()
                         .setCustomId('calc-0')
                         .setStyle(ButtonStyle.Primary)
@@ -267,7 +260,9 @@ export const execute = async (
                     filter: async (int: MessageComponentInteraction) => {
                         const reply = await interaction.fetchReply()
                         return int.message.id === reply.id
-                    }
+                    },
+                    idle: 30000,
+                    time: 600000
                 })!
 
             collector.on('collect', async (int: ButtonInteraction) => {
@@ -275,7 +270,7 @@ export const execute = async (
                     expression = ''
                 }
                 const expr = int.customId.replace('calc-', '')
-                const regex = '([-+*/.]|[-+]?[0-9])'
+                const regex = '([-+*/.()]|[-+]?[0-9])'
                 if (expr.match(regex)) {
                     if (expression == '0') expression = ''
                     expression += expr
@@ -285,16 +280,16 @@ export const execute = async (
                     } catch (e) {
                         await int.reply({
                             ephemeral: true,
-                            embeds: [
-                                error(
-                                    'Expression evaluation failed: octals are not allowed. Did you accidentally precede a number with a 0?'
-                                )
-                            ]
+                            embeds: [error('Expression evaluation failed.')]
                         })
                         return
                     }
                 } else if (expr == 'clear') {
                     expression = '0'
+                } else if (expr == '←') {
+                    if (expression.length > 1)
+                        expression = expression.slice(0, -1)
+                    else if (expression.length == 1) expression = '0'
                 }
 
                 embed.setDescription(`\`\`\`js\n${expression}\n\`\`\``)
@@ -303,6 +298,19 @@ export const execute = async (
                     embeds: [embed]
                 })
                 int.deferUpdate().catch((e) => {})
+            })
+
+            collector.on('end', async () => {
+                for (const row of rows) {
+                    for (const button of row.components) {
+                        button.setDisabled(true)
+                    }
+                }
+
+                const msg = await interaction.fetchReply()
+                msg.edit({
+                    components: rows
+                })
             })
         }
     }
