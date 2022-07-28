@@ -60,10 +60,84 @@ export const data = new SlashCommandBuilder()
                     .setRequired(true)
             )
     )
+    .addSubcommand((subcommand) =>
+        subcommand
+            .setName('twobuttons')
+            .setDescription('Generates the iconic two buttons meme.')
+            .addStringOption((option) =>
+                option
+                    .setName('button1')
+                    .setDescription('The text for the first button')
+                    .setMaxLength(24)
+                    .setRequired(true)
+            )
+            .addStringOption((option) =>
+                option
+                    .setName('button2')
+                    .setDescription('The text for the second button')
+                    .setMaxLength(24)
+                    .setRequired(true)
+            )
+            .addStringOption((option) =>
+                option
+                    .setName('man')
+                    .setDescription('The text on the nervous sweating man')
+                    .setMaxLength(24)
+            )
+    )
+    .addSubcommand((subcommand) =>
+        subcommand
+            .setName('expandingbrain')
+            .setDescription('Generates an expanding brain meme')
+            .addStringOption((option) =>
+                option
+                    .setName('text1')
+                    .setDescription('Small brain')
+                    .setRequired(true)
+            )
+            .addStringOption((option) =>
+                option
+                    .setName('text2')
+                    .setDescription('Average brain')
+                    .setRequired(true)
+            )
+            .addStringOption((option) =>
+                option
+                    .setName('text3')
+                    .setDescription('Big brain')
+                    .setRequired(true)
+            )
+            .addStringOption((option) =>
+                option
+                    .setName('text4')
+                    .setDescription('Massive brain')
+                    .setRequired(true)
+            )
+    )
+
+const saveImage = async (
+    interaction: ChatInputCommandInteraction,
+    canvas: Canvas
+) => {
+    canvas.saveAsSync('tmp.png')
+
+    const embed = new EmbedBuilder()
+        .setTitle(null)
+        .setDescription(null)
+        .setImage('attachment://tmp.png')
+        .setColor(0x2f3136)
+
+    await interaction.editReply({
+        embeds: [embed],
+        files: ['./tmp.png']
+    })
+
+    fs.unlinkSync('./tmp.png')
+}
 
 export const execute = async (interaction: ChatInputCommandInteraction) => {
     switch (interaction.options.getSubcommand()) {
-        case 'image': {
+        case 'resize': {
             await loading(
                 'Hold on...',
                 'Processing... hold on for a moment...',
@@ -79,21 +153,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
             const ctx = canvas.getContext('2d')
             ctx.drawImage(img, 0, 0, width, height)
 
-            canvas.saveAsSync('tmp.png')
-
-            const embed = new EmbedBuilder()
-                .setTitle(null)
-                .setDescription(null)
-                .setImage('attachment://tmp.png')
-                .setColor(0x2f3136)
-                .setFooter({ text: `${width} • ${height}` })
-
-            await interaction.editReply({
-                embeds: [embed],
-                files: ['./tmp.png']
-            })
-
-            fs.unlinkSync('./tmp.png')
+            await saveImage(interaction, canvas)
 
             break
         }
@@ -122,20 +182,77 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
 
             ctx.fillText(text2!, 266, 266, 246)
 
-            canvas.saveAsSync('tmp.png')
+            await saveImage(interaction, canvas)
+            break
+        }
+        case 'twobuttons': {
+            await loading(
+                'Processing...',
+                'Processing image... this might take a while...',
+                interaction
+            )
 
-            const embed = new EmbedBuilder()
-                .setTitle(null)
-                .setDescription(null)
-                .setImage('attachment://tmp.png')
-                .setColor(0x2f3136)
+            const text1 = interaction.options.getString('button1')!
+            const text2 = interaction.options.getString('button2')!
+            const manText = interaction.options.getString('man') ?? ''
 
-            await interaction.editReply({
-                embeds: [embed],
-                files: ['./tmp.png']
-            })
+            const imgUrl = 'https://imgflip.com/s/meme/Two-Buttons.jpg'
+            const img = await loadImage(imgUrl)
 
-            fs.unlinkSync('./tmp.png')
+            const canvas = new Canvas(338, 512)
+            const ctx = canvas.getContext('2d')
+
+            ctx.textWrap = true
+            ctx.font = '16px Arial'
+            ctx.textAlign = 'left'
+            ctx.textBaseline = 'top'
+
+            ctx.drawImage(img, 0, 0, 338, 512)
+            ctx.rotate(-0.2)
+            ctx.fillText(text1, 20, 80, 100)
+            ctx.font = '13px Arial'
+            ctx.fillText(text2, 140, 80, 80)
+
+            ctx.font = '16px Arial'
+            ctx.rotate(0.2)
+            ctx.textAlign = 'center'
+            ctx.fillText(manText, 160, 316)
+
+            await saveImage(interaction, canvas)
+
+            break
+        }
+        case 'expandingbrain': {
+            await loading(
+                'Processing...',
+                'Processing image... this might take a while...',
+                interaction
+            )
+
+            const imgUrl = 'https://imgflip.com/s/meme/Expanding-Brain.jpg'
+
+            const text1 = interaction.options.getString('text1')!
+            const text2 = interaction.options.getString('text2')!
+            const text3 = interaction.options.getString('text3')!
+            const text4 = interaction.options.getString('text4')!
+
+            const img = await loadImage(imgUrl)
+
+            const canvas = new Canvas(365, 512)
+            const ctx = canvas.getContext('2d')
+
+            ctx.textWrap = true
+            ctx.font = '16px Arial'
+            ctx.textAlign = 'left'
+            ctx.textBaseline = 'top'
+
+            ctx.drawImage(img, 0, 0, 365, 512)
+            ctx.fillText(text1, 10, 10, 172)
+            ctx.fillText(text2, 10, 150, 172)
+            ctx.fillText(text3, 10, 270, 172)
+            ctx.fillText(text4, 10, 390, 172)
+
+            await saveImage(interaction, canvas)
 
             break
         }
