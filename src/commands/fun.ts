@@ -5,7 +5,8 @@ import {
     SlashCommandBuilder,
     ButtonBuilder,
     EmbedBuilder,
-    ChatInputCommandInteraction
+    ChatInputCommandInteraction,
+    Embed
 } from 'discord.js'
 import { v4 as uuid } from 'uuid'
 import { FetchError } from 'node-fetch'
@@ -258,6 +259,8 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
                 })
             }
 
+            let nsfwCheck = 0
+
             const update = async (next: boolean) => {
                 next ? index++ : index--
 
@@ -282,8 +285,24 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
                 if (
                     post.data.thumbnail == 'nsfw' ||
                     post.data.stickied ||
-                    post.data.pinned
+                    post.data.pinned ||
+                    post.data.over_18
                 ) {
+                    if (post.data.over_18) {
+                        nsfwCheck += 1
+                    }
+                    if (nsfwCheck >= 5) {
+                        const embed2 = new EmbedBuilder()
+                            .setTitle('Error')
+                            .setDescription(
+                                'It appears this subreddit contains a large amount of nsfw content. Unfortunately, this has to be restricted for now.'
+                            )
+                            .setColor(0xff0000)
+                        await interaction.editReply({
+                            embeds: [embed2]
+                        })
+                        return
+                    }
                     update(next)
                     return
                 }
