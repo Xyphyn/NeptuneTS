@@ -26,7 +26,7 @@ export const data = new SlashCommandBuilder()
             )
             .addSubcommand((subcommand) =>
                 subcommand
-                    .setName('warningThreshold')
+                    .setName('warningthreshold')
                     .setDescription(
                         'The amount of warnings before a user is muted.'
                     )
