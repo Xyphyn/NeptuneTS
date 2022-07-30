@@ -122,7 +122,9 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
         await interaction.channel!.send(
             `${getConfig(interaction).emojiSettings.mute} <@${
                 user.id
-            }> has been muted. **Automatic mute after 3 warnings within ${
+            }> has been muted. **Automatic mute after ${
+                getConfig(interaction).punishmentSettings.warningsUntilMute
+            } warnings within ${
                 getConfig(interaction).punishmentSettings.warningHours
             } hours.**`
         )
@@ -132,7 +134,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
             .setFields([
                 {
                     name: 'Muted',
-                    value: '**Automatic mute after 3 warnings within 24 hours.**'
+                    value: '**Automatic mute after multiple warnings within 24 hours.**'
                 }
             ])
 

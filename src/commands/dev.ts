@@ -66,9 +66,9 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
                 .setDescription(
                     `<:cpu:998732645187997748> CPU | ${os.loadavg()[0]}%
                 <:memory:998732647847182366> Memory | ${Math.round(
-                    process.memoryUsage().heapTotal / 1000000
+                    process.memoryUsage().rss / 1000000
                 )} MB \`${Math.round(
-                        (process.memoryUsage().heapTotal / 512000000) * 100
+                        (process.memoryUsage().rss / 512000000) * 100
                     )}%\``
                 )
                 .setColor('#5865f2')

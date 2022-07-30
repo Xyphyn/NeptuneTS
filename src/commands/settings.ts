@@ -24,6 +24,23 @@ export const data = new SlashCommandBuilder()
                             .setRequired(true)
                     )
             )
+            .addSubcommand((subcommand) =>
+                subcommand
+                    .setName('warningThreshold')
+                    .setDescription(
+                        'The amount of warnings before a user is muted.'
+                    )
+                    .addIntegerOption((option) =>
+                        option
+                            .setName('warnings')
+                            .setDescription(
+                                'The amount of warnings before a user is muted.'
+                            )
+                            .setMinValue(1)
+                            .setMaxValue(10)
+                            .setRequired(true)
+                    )
+            )
     )
 
 export const permissions = PermissionFlagsBits.Administrator
@@ -41,7 +58,16 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
 
                     break
                 }
+                case 'warningThreshold': {
+                    const thresh = interaction.options.getInteger('warnings')
+                    getConfig(
+                        interaction
+                    ).punishmentSettings.warningsUntilMute = thresh
+                    saveState()
+                    break
+                }
             }
+
             break
         }
     }

@@ -127,7 +127,7 @@ client.on('interactionCreate', async (interaction) => {
 
         const causes = {
             'Missing Permissions':
-                'The user is probably not able to be punished.',
+                'The bot does not have permission to do that, or that user is not able to be punished.',
             'Unexpected token < in JSON at position 0':
                 'You might have input an invalid/inactive subreddit.',
             'Subreddit not found.': 'That subreddit does not exist.',
