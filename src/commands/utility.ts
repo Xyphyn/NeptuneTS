@@ -11,7 +11,7 @@ import {
     SlashCommandBuilder
 } from 'discord.js'
 import { config, getColor, getConfig } from '../config/config.js'
-import { error } from '../managers/errorManager.js'
+import { error, noPermission } from '../managers/errorManager.js'
 
 export const data = new SlashCommandBuilder()
     .setName('utility')
@@ -130,6 +130,13 @@ export const execute = async (
             break
         }
         case 'status': {
+            if (interaction.user.id != '735626570399481878') {
+                await interaction.reply({
+                    embeds: [noPermission('Bot Owner')]
+                })
+                return
+            }
+
             const message = interaction.options.getString('status-message')
             const type = interaction.options.getString('status-type')!
 
