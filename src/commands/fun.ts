@@ -17,6 +17,7 @@ import { loading } from '../util/tools.js'
 export const data = new SlashCommandBuilder()
     .setName('fun')
     .setDescription('Fun commands')
+    .setDMPermission(false)
     .addSubcommand((subcommand) =>
         subcommand.setName('fact').setDescription('Get a random fact!')
     )

@@ -27,8 +27,13 @@ export async function deploy() {
 
         for (const file of commandFiles) {
             const command = await import(`./commands/${file}`)
-            command.data.setDMPermission(false)
-            commands.push(command.data.toJSON())
+            let data
+            try {
+                data = command.data.toJSON()
+            } catch (e) {
+                data = command.data
+            }
+            commands.push(data)
         }
 
         const rest = new REST({ version: '10' }).setToken(process.env.TOKEN!)

@@ -17,6 +17,7 @@ import { client } from '../app.js'
 export const data = new SlashCommandBuilder()
     .setName('warn')
     .setDescription('Warning commands')
+    .setDMPermission(false)
     .addUserOption((option) =>
         option
             .setName('user')

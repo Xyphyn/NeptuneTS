@@ -10,6 +10,7 @@ import { findInDatabase } from '../database/mongodb.js'
 export const data = new SlashCommandBuilder()
     .setName('warnings')
     .setDescription('Gets warnings for a user')
+    .setDMPermission(false)
     .addUserOption((option) =>
         option
             .setName('user')

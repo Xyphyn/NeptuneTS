@@ -19,6 +19,7 @@ export const data = new SlashCommandBuilder()
             .setDescription('The reason for the ban.')
             .setRequired(true)
     )
+    .setDMPermission(false)
 
 export const permissions = PermissionFlagsBits.BanMembers
 export const permissionsString = 'Ban Members'

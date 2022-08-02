@@ -11,6 +11,7 @@ import { loading } from '../util/tools.js'
 export const data = new ContextMenuCommandBuilder()
     .setName('Translate To English')
     .setType(3)
+    .setDMPermission(true)
 
 export const execute = async (
     interaction: MessageContextMenuCommandInteraction

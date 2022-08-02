@@ -15,6 +15,7 @@ export const data = new SlashCommandBuilder()
             .setDescription('The uuid of the warning to delete.')
             .setRequired(true)
     )
+    .setDMPermission(false)
 
 export const permissions = PermissionsBitField.Flags.ModerateMembers
 export const permissionsString = 'Moderate Members'

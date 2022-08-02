@@ -8,6 +8,7 @@ import { config, getConfig } from '../config/config.js'
 
 export const data = new SlashCommandBuilder()
     .setName('ping')
+    .setDMPermission(false)
     .setDescription('Returns Discord API Ping')
 
 export const execute = async (

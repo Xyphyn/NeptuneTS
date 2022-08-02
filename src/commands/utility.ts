@@ -16,6 +16,7 @@ import { error, noPermission } from '../managers/errorManager.js'
 export const data = new SlashCommandBuilder()
     .setName('utility')
     .setDescription('Utility commands')
+    .setDMPermission(false)
     .addSubcommand((subcommand) =>
         subcommand
             .setName('embed')

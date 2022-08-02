@@ -10,6 +10,7 @@ import { getConfig } from '../config/config.js'
 export const data = new SlashCommandBuilder()
     .setName('channel')
     .setDescription('Channel commands')
+    .setDMPermission(false)
     .addSubcommand((subcommand) =>
         subcommand
             .setName('slowmode')

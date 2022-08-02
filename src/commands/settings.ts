@@ -9,6 +9,7 @@ import { getConfig, saveState } from '../config/config.js'
 export const data = new SlashCommandBuilder()
     .setName('settings')
     .setDescription('[BETA] Simpler configuration.')
+    .setDMPermission(false)
     .addSubcommandGroup((group) =>
         group
             .setName('moderation')

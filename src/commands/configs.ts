@@ -7,6 +7,7 @@ import { noPermission } from '../managers/errorManager.js'
 export const data = new SlashCommandBuilder()
     .setName('oldconfig')
     .setDescription('[OLD] Advanced config commands.')
+    .setDMPermission(false)
     .addSubcommand((subcommand) =>
         subcommand
             .setName('set')

@@ -74,8 +74,8 @@ client.once('ready', async () => {
     })
     await deploy()
     await connectToDatabase('discord', client).then(() => {
-        client.user.setActivity(`cat /dev/sda | aplay`, {
-            type: ActivityType.Listening
+        client.user.setActivity(`Bot is being worked on...`, {
+            type: ActivityType.Custom
         })
     })
 

@@ -12,6 +12,7 @@ import { PermissionsBitField } from 'discord.js'
 export const data = new SlashCommandBuilder()
     .setName('mute')
     .setDescription('Times out a user')
+    .setDMPermission(false)
     .addUserOption((option) =>
         option
             .setName('user')

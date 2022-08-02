@@ -13,6 +13,7 @@ export const data = new SlashCommandBuilder()
             .setDescription('The text to translate.')
             .setRequired(true)
     )
+    .setDMPermission(false)
     .addStringOption((option) =>
         option
             .setName('language')

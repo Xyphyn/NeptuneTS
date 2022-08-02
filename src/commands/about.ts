@@ -3,10 +3,13 @@ import {
     EmbedBuilder,
     SlashCommandBuilder
 } from 'discord.js'
+import { Command } from '../types/types'
 
-export const data = new SlashCommandBuilder()
-    .setName('about')
-    .setDescription('About this bot!')
+export const data: Command = {
+    name: 'about',
+    description: 'About this bot!',
+    dmPermission: false
+}
 
 export const execute = async (interaction: ChatInputCommandInteraction) => {
     const embed = new EmbedBuilder()

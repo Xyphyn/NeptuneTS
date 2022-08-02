@@ -10,6 +10,7 @@ export const data = new SlashCommandBuilder()
             .setDescription('The user to timeout.')
             .setRequired(true)
     )
+    .setDMPermission(false)
 
 export const permissions = PermissionsBitField.Flags.ModerateMembers
 export const permissionsString = 'Moderate Members'

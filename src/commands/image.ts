@@ -10,6 +10,7 @@ import fs from 'fs'
 export const data = new SlashCommandBuilder()
     .setName('image')
     .setDescription('Image manipulation commands')
+    .setDMPermission(false)
     .addSubcommand((subcommand) =>
         subcommand
             .setName('resize')

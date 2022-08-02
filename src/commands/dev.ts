@@ -10,6 +10,7 @@ import { PermissionsBitField } from 'discord.js'
 export const data = new SlashCommandBuilder()
     .setName('dev')
     .setDescription('Developer commands')
+    .setDMPermission(false)
     .addSubcommand((subcommand) =>
         subcommand
             .setName('sync')
