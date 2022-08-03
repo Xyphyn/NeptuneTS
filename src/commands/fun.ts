@@ -6,47 +6,74 @@ import {
     ButtonBuilder,
     EmbedBuilder,
     ChatInputCommandInteraction,
-    Embed
+    Embed,
+    ChatInputApplicationCommandData,
+    ApplicationCommandOptionType,
+    APIEmbed
 } from 'discord.js'
 import { v4 as uuid } from 'uuid'
 import { FetchError } from 'node-fetch'
 import { ButtonStyle } from 'discord.js'
 import { InteractionType } from 'discord.js'
 import { loading } from '../util/tools.js'
+import { Command } from '../types/types.js'
 
-export const data = new SlashCommandBuilder()
-    .setName('fun')
-    .setDescription('Fun commands')
-    .setDMPermission(false)
-    .addSubcommand((subcommand) =>
-        subcommand.setName('fact').setDescription('Get a random fact!')
-    )
-    .addSubcommand((subcommand) =>
-        subcommand.setName('coinflip').setDescription('Flips a coin. Why not?')
-    )
-    .addSubcommand((subcommand) =>
-        subcommand
-            .setName('cat')
-            .setDescription('Gets a picture of a cute kitty.')
-            .addBooleanOption((option) =>
-                option
-                    .setName('animated')
-                    .setDescription('Gets an animated cat.')
-            )
-    )
-    .addSubcommand((subcommand) =>
-        subcommand
-            .setName('reddit')
-            .setDescription('Gets a random post from a subreddit.')
-            .addStringOption((option) =>
-                option
-                    .setName('subreddit')
-                    .setDescription(
-                        'The subreddit to get posts from. (Default memes)'
-                    )
-                    .setRequired(false)
-            )
-    )
+export const data: Command = {
+    name: 'fun',
+    description: 'Fun commands',
+    dmPermission: false,
+    options: [
+        {
+            type: ApplicationCommandOptionType.Subcommand,
+            name: 'fact',
+            description: 'Gets a random fact'
+        },
+        {
+            type: ApplicationCommandOptionType.Subcommand,
+            name: 'coinflip',
+            description: 'Flips a virtual coin.'
+        },
+        {
+            type: ApplicationCommandOptionType.Subcommand,
+            name: 'cat',
+            description: 'Gets a picture of a cute kitty.',
+            options: [
+                {
+                    type: ApplicationCommandOptionType.Boolean,
+                    name: 'animated',
+                    description: 'Whether the cat should be a GIF or not.'
+                }
+            ]
+        },
+        {
+            type: ApplicationCommandOptionType.Subcommand,
+            name: 'reddit',
+            description: 'Gets posts from a subreddit. (Default is r/memes)',
+            options: [
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'subreddit',
+                    description:
+                        'The subreddit to get posts from. (Default is r/memes)'
+                }
+            ]
+        },
+        {
+            type: ApplicationCommandOptionType.Subcommand,
+            name: '8ball',
+            description:
+                '100% Accurate 8 ball that can 100% predict the future',
+            options: [
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'question',
+                    description: 'What to ask the 8 ball.',
+                    required: true
+                }
+            ]
+        }
+    ]
+}
 
 export const execute = async (interaction: ChatInputCommandInteraction) => {
     switch (interaction.options.getSubcommand()) {
@@ -417,6 +444,46 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
             update(true)
 
             break
+        }
+        case '8ball': {
+            const responses = [
+                'It is certain',
+                'Without a doubt',
+                'You may rely on it',
+                'Yes definitely',
+                'It is decidedly so',
+                'As I see it, yes',
+                'Most likely',
+                'Yes',
+                'Outlook good',
+                'Signs point to yes',
+                'Reply hazy, try again',
+                'Better not tell you now',
+                'Ask again later',
+                'Cannot predict now',
+                'Concentrate and ask again',
+                "Don't count on it",
+                'Outlook not so good',
+                'My sources say no',
+                'Very doubtful',
+                'My reply is no'
+            ]
+            const embed: APIEmbed = {
+                fields: [
+                    {
+                        name: 'You asked:',
+                        value: interaction.options.getString('question')!
+                    },
+                    {
+                        name: "<a:8ball:1004173509217497168> 8ball's Answer:",
+                        value: responses[
+                            Math.floor(Math.random() * responses.length)
+                        ]
+                    }
+                ],
+                color: 0xbd00ff
+            }
+            interaction.reply({ embeds: [embed] })
         }
     }
 }

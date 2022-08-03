@@ -256,6 +256,7 @@ export const execute = async (
 
             const embed = new EmbedBuilder()
                 .setDescription(`\`\`\`js\n${expression}\n\`\`\``)
+                .setImage('https://i.stack.imgur.com/Fzh0w.png')
                 .setColor(0x2f3136)
 
             await interaction.reply({
