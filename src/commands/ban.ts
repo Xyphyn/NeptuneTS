@@ -2,6 +2,7 @@ import { ChatInputCommandInteraction, PermissionsBitField } from 'discord.js'
 import { PermissionFlagsBits } from 'discord.js'
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
 import { config, getConfig } from '../config/config.js'
+import { error } from '../managers/errorManager.js'
 import { logEmbed } from '../managers/logManager.js'
 
 export const data = new SlashCommandBuilder()
@@ -50,14 +51,12 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
             reason: reason ?? 'No reason specified.'
         })
     } else {
-        const embed2 = new EmbedBuilder()
-            .setColor(getConfig(interaction).embedSettings.errorColor)
-            .setTitle('Ban failed')
-            .setDescription(
-                `<:WindowsCritical:824380490051747840> Failed to ban <@${user.id}>. They probably are an admin/moderator.`
-            )
         await interaction.reply({
-            embeds: [embed2]
+            embeds: [
+                error(
+                    `Failed to ban <@${user.id}>. They probably are an admin/moderator.`
+                )
+            ]
         })
         return
     }

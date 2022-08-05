@@ -33,6 +33,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
                 inline: true
             }
         ])
+
     const embed2 = new EmbedBuilder()
         .setColor(getConfig(interaction).embedSettings.errorColor)
         .setTitle('Warning deleted')

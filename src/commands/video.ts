@@ -56,17 +56,22 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
 
     const cmd = ffmpeg(`file.${attachmentType}`)
         .FPS(10)
-        .videoBitrate('5k')
+        .videoBitrate('50k')
         .setSize('360x240')
-        .aspectRatio('360x240')
+        .aspectRatio('360:240')
         .audioBitrate('8k')
         .output(`out.${attachmentType}`)
 
-    cmd.run()
-    await interaction.editReply({
-        files: [`./out.${attachmentType}`],
-        embeds: []
+    await new Promise((resolve) => {
+        cmd.on('end', (_) => resolve(null)).run()
     })
-    fs.unlinkSync(`./out.${attachmentType}`)
-    fs.unlinkSync(`./file.${attachmentType}`)
+    await interaction
+        .editReply({
+            files: [`./out.${attachmentType}`],
+            embeds: []
+        })
+        .then(() => {
+            fs.unlinkSync(`./out.${attachmentType}`)
+            fs.unlinkSync(`./file.${attachmentType}`)
+        })
 }
