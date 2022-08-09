@@ -32,7 +32,7 @@ export const data: Command = {
 export const execute = async (interaction: ChatInputCommandInteraction) => {
     await loading(
         'Processing',
-        'Processing... this will take a while...',
+        'Processing... this can take up to 5 minutes...',
         interaction
     )
 
@@ -54,24 +54,31 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
         res.body!.pipe(fs.createWriteStream(file)).on('finish', fulfill)
     })
 
-    const cmd = ffmpeg(`file.${attachmentType}`)
-        .FPS(10)
-        .videoBitrate('50k')
-        .setSize('360x240')
-        .aspectRatio('360:240')
-        .audioBitrate('8k')
-        .output(`out.${attachmentType}`)
+    switch (interaction.options.getSubcommand()) {
+        case 'lowquality': {
+            const cmd = ffmpeg(`file.${attachmentType}`)
+                .FPS(10)
+                .videoBitrate('50k')
+                .setSize('360x240')
+                .aspectRatio('360:240')
+                .audioBitrate('8k')
+                .output(`out.${attachmentType}`)
 
-    await new Promise((resolve) => {
-        cmd.on('end', (_) => resolve(null)).run()
-    })
-    await interaction
-        .editReply({
-            files: [`./out.${attachmentType}`],
-            embeds: []
-        })
-        .then(() => {
-            fs.unlinkSync(`./out.${attachmentType}`)
-            fs.unlinkSync(`./file.${attachmentType}`)
-        })
+            await new Promise((resolve) => {
+                cmd.on('end', (_) => resolve(null)).run()
+            })
+
+            await interaction
+                .editReply({
+                    files: [`./out.${attachmentType}`],
+                    embeds: []
+                })
+                .then(() => {
+                    fs.unlinkSync(`./out.${attachmentType}`)
+                    fs.unlinkSync(`./file.${attachmentType}`)
+                })
+
+            break
+        }
+    }
 }
