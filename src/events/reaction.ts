@@ -87,7 +87,8 @@ const languages: any = {
     '🇮🇱': 'iw',
     '🇸🇻': 'sv',
     '🇰🇷': 'ko',
-    '🇬🇷': 'el'
+    '🇬🇷': 'el',
+    '🇵🇹': 'pt'
 }
 
 export const languageNames: any = {
@@ -105,7 +106,8 @@ export const languageNames: any = {
     iw: 'Hebrew',
     sv: 'Swedish',
     ko: 'Korean',
-    el: 'Greek'
+    el: 'Greek',
+    pt: 'Portuguese'
 }
 
 export const execute = async (reaction: MessageReaction) => {

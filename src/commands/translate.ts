@@ -33,7 +33,8 @@ export const data = new SlashCommandBuilder()
                 { name: 'Hebrew', value: 'iw' },
                 { name: 'Swedish', value: 'sv' },
                 { name: 'Korean', value: 'ko' },
-                { name: 'Greek', value: 'el' }
+                { name: 'Greek', value: 'el' },
+                { name: 'Portuguese', value: 'pt' }
             )
             .setRequired(true)
     )
