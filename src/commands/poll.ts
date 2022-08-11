@@ -61,11 +61,11 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
         new ButtonBuilder()
             .setLabel(options[0])
             .setCustomId(`op1-${options[0]}`)
-            .setStyle(ButtonStyle.Secondary),
+            .setStyle(ButtonStyle.Primary),
         new ButtonBuilder()
             .setLabel(options[1])
             .setCustomId(`op2-${options[1]}`)
-            .setStyle(ButtonStyle.Secondary)
+            .setStyle(ButtonStyle.Primary)
     )
 
     const embed: APIEmbed = {
