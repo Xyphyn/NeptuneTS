@@ -12,7 +12,7 @@ export const pollDataMap = new Map<string, PollData>()
 let expiry = setTimeout(() => {}, -1)
 
 export const handle = async (id: string, interaction: ButtonInteraction) => {
-    const opName = id.split('-').slice(-1)[0]
+    const opName = interaction.customId.split('-').slice(-1)[0]
 
     const poll = polls.get(id)
     if (!poll) {
@@ -30,37 +30,45 @@ export const handle = async (id: string, interaction: ButtonInteraction) => {
     })
 
     const pollData = pollDataMap.get(id)!
-    const option = interaction.customId.split('-')[0]
+    poll.set(interaction.user.id, `op${pollData.options.indexOf(opName)}`)
 
-    if (option == 'op1') {
-        poll.set(interaction.user.id, 'op1')
-    } else {
-        poll.set(interaction.user.id, 'op2')
-    }
+    // if (option == 'op1') {
+    //     poll.set(interaction.user.id, 'op1')
+    // } else {
+    //     poll.set(interaction.user.id, 'op2')
+    // }
 
-    let op1 = 0
-    let op2 = 0
+    const opCounts = new Array(pollData.options.length).fill(0)
 
     for (const choice of poll.values()) {
-        if (choice == 'op1') op1++
-        else op2++
+        // if (choice == 'op1') op1++
+        // else op2++
+
+        const chIndex: any = choice.split('p')[1]
+
+        opCounts[chIndex] += 1
     }
 
     const embed: APIEmbed = {
         title: `${pollData.question}`,
         description: `Expires <t:${Math.floor(Date.now() / 1000) + 43200}:R>`,
-        fields: [
-            {
-                name: `${pollData.options[0]}`,
-                value: `${op1}`,
-                inline: true
-            },
-            {
-                name: `${pollData.options[1]}`,
-                value: `${op2}`,
-                inline: true
-            }
-        ],
+        // fields: [
+        //     {
+        //         name: `${pollData.options[0]}`,
+        //         value: `${op1}`,
+        //         inline: true
+        //     },
+        //     {
+        //         name: `${pollData.options[1]}`,
+        //         value: `${op2}`,
+        //         inline: true
+        //     }
+        // ],
+        fields: pollData.options.map((val, index) => ({
+            name: `${val}`,
+            value: opCounts[index],
+            inline: true
+        })),
         color: globalConfig.embedColor
     }
 

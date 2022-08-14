@@ -9,8 +9,8 @@ export const execute = async (interaction: Interaction) => {
         if (!interaction.isButton()) return
 
         if (
-            interaction.customId.startsWith('op1-') ||
-            interaction.customId.startsWith('op2-')
+            interaction.customId.startsWith('pollop-') ||
+            interaction.customId.startsWith('pollop-')
         )
             handle(interaction.message.id, interaction)
 
