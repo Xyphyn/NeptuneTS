@@ -10,8 +10,12 @@ import {
     ComponentType
 } from 'discord.js'
 import { globalConfig } from '../config/globalConfig.js'
-import { newPoll, polls } from '../tools/polltool.js'
+import { delPoll, newPoll, polls } from '../tools/polltool.js'
 import { Command } from '../types/types'
+import ms from 'ms'
+import { getConfig } from '../config/config.js'
+import { error } from '../managers/errorManager.js'
+import { clamp } from '../util/tools.js'
 
 export const data: Command = {
     name: 'poll',
@@ -54,6 +58,11 @@ export const data: Command = {
                     type: ApplicationCommandOptionType.String,
                     name: 'option5',
                     description: 'The fifth choice.'
+                },
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'expiry',
+                    description: 'Expiration date.'
                 }
             ]
         }
@@ -71,6 +80,24 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     const op4 = interaction.options.getString('option4')!
     const op5 = interaction.options.getString('option5')!
 
+    if (!getConfig(interaction).premium) {
+        await interaction.editReply({
+            embeds: [
+                error(
+                    'Custom expiration times are restricted to premium servers.'
+                )
+            ]
+        })
+
+        return
+    }
+
+    const expire = clamp(
+        ms(interaction.options.getString('expiry') || '12h') || 43200000,
+        5000,
+        604800000
+    )
+
     const options = [op1, op2, op3, op4, op5].filter(
         (option) => option != undefined
     )
@@ -84,7 +111,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
         return
     }
 
-    newPoll(msg.id, options, question, msg)
+    newPoll(msg.id, options, question, msg, expire)
 
     const row: ActionRowBuilder<any> = new ActionRowBuilder().addComponents(
         options.map((option) =>
@@ -97,7 +124,9 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
 
     const embed: APIEmbed = {
         title: `${question}`,
-        description: `Expires <t:${Math.floor(Date.now() / 1000) + 43200}:R>`,
+        description: `Expires <t:${Math.floor(
+            Date.now() / 1000 + expire / 1000
+        )}:R>`,
         fields: options.map((option) => ({
             name: `${option}`,
             value: '0',
@@ -108,6 +137,10 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
             text: 'Polls expire to save resources. Contact Xylight for more info.'
         }
     }
+
+    const expiry = setTimeout(() => {
+        delPoll(msg.id)
+    }, expire)
 
     await interaction.editReply({
         embeds: [embed],

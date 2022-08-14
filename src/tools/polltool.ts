@@ -5,6 +5,7 @@ interface PollData {
     options: Array<string>
     question: string
     message: Message
+    expiration: number | undefined
 }
 
 export const polls = new Map<string, Map<string, string>>()
@@ -24,13 +25,13 @@ export const handle = async (id: string, interaction: ButtonInteraction) => {
         return
     }
 
-    clearTimeout(expiry)
-    expiry = setTimeout(() => {
-        poll.delete(id)
-    })
-
     const pollData = pollDataMap.get(id)!
     poll.set(interaction.user.id, `op${pollData.options.indexOf(opName)}`)
+
+    clearTimeout(expiry)
+    expiry = setTimeout(() => {
+        polls.delete(id)
+    }, pollData.expiration!)
 
     // if (option == 'op1') {
     //     poll.set(interaction.user.id, 'op1')
@@ -51,7 +52,9 @@ export const handle = async (id: string, interaction: ButtonInteraction) => {
 
     const embed: APIEmbed = {
         title: `${pollData.question}`,
-        description: `Expires <t:${Math.floor(Date.now() / 1000) + 43200}:R>`,
+        description: `Expires <t:${Math.floor(
+            Date.now() / 1000 + pollData.expiration! / 1000
+        )}:R>`,
         // fields: [
         //     {
         //         name: `${pollData.options[0]}`,
@@ -83,12 +86,18 @@ export const newPoll = (
     id: string,
     options: Array<string>,
     question: string,
-    message: Message
+    message: Message,
+    expiration: number
 ) => {
     polls.set(id, new Map<string, string>())
     pollDataMap.set(id, {
         options: options,
         question: question,
-        message: message
+        message: message,
+        expiration: expiration
     })
+}
+
+export const delPoll = (id: string) => {
+    polls.delete(id)
 }

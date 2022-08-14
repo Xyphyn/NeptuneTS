@@ -44,3 +44,6 @@ export const embed = (
     const embed = new EmbedBuilder().setTitle(title).setDescription(desc)
     if (guildColor) embed.setColor(getConfig(interaction).embedSettings.color)
 }
+
+export const clamp = (num: number, min: number, max: number) =>
+    Math.min(Math.max(num, min), max)

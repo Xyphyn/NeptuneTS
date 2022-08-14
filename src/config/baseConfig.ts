@@ -40,5 +40,6 @@ export let baseConfig: any = {
     polls: {
         enabled: true,
         permission: 'SendMessages'
-    }
+    },
+    premium: false
 }
