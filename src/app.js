@@ -84,6 +84,15 @@ client.once('ready', async () => {
     setInterval(async () => {
         refreshGuilds(client)
     }, 30000)
+
+    const xy = await client.users.fetch('735626570399481878')
+    const embed = new EmbedBuilder()
+        .setTitle('Restart')
+        .setDescription(`Neptune has restarted.`)
+        .setColor(0xbd00ff)
+    xy.send({
+        embeds: [embed]
+    })
 })
 
 client.on('guildCreate', async (guild) => {
