@@ -1,6 +1,8 @@
 import {
     ActionRowBuilder,
     ActivityType,
+    APIEmbed,
+    ApplicationCommandOptionType,
     ButtonBuilder,
     ButtonInteraction,
     ButtonStyle,
@@ -11,7 +13,9 @@ import {
     SlashCommandBuilder
 } from 'discord.js'
 import { config, getColor, getConfig } from '../config/config.js'
+import { globalConfig } from '../config/globalConfig.js'
 import { error, noPermission } from '../managers/errorManager.js'
+import { Command } from '../types/types.js'
 
 export const data = new SlashCommandBuilder()
     .setName('utility')
@@ -88,6 +92,19 @@ export const data = new SlashCommandBuilder()
         subcommand
             .setName('calculator')
             .setDescription('A calculator. Why did I waste my time on this')
+    )
+    .addSubcommand((subcommand) =>
+        subcommand
+            .setName('colorify')
+            .setDescription('Allows adding color to text!')
+            .addStringOption((option) =>
+                option
+                    .setName('text')
+                    .setDescription(
+                        'The text. Syntax: /COLOR/, Usage: [Hello, /BLUE/How are /GREEN/you?]'
+                    )
+                    .setRequired(true)
+            )
     )
 
 export const execute = async (
@@ -320,6 +337,35 @@ export const execute = async (
                 msg.edit({
                     components: rows
                 })
+            })
+        }
+        case 'colorify': {
+            const text = interaction.options.getString('text')
+            let result = text
+            const associations: any = {
+                '/RED/': '[0;31m',
+                '/YELLOW/': '[0;33m',
+                '/GREEN/': '[0;32m',
+                '/BLUE/': '[0;34m',
+                '/PURPLE/': '[0;35m',
+                '/BLACK/': '[0;30m',
+                '/WHITE/': '[0;37m',
+                '/BOLD/': '[1m'
+            }
+
+            for (const elem of Object.keys(associations)) {
+                const foo: string = elem
+                result = result!.replaceAll(elem, associations[foo])
+            }
+
+            const embed: APIEmbed = {
+                description: '\\`\\`\\`ansi\n' + result + '\n\\`\\`\\`',
+                footer: {text: 'Copy/Paste this.'},
+                color: globalConfig.embedColor
+            }
+
+            await interaction.reply({
+                embeds: [embed]
             })
         }
     }
