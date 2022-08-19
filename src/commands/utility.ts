@@ -338,6 +338,7 @@ export const execute = async (
                     components: rows
                 })
             })
+            break
         }
         case 'colorify': {
             const text = interaction.options.getString('text')
@@ -367,6 +368,8 @@ export const execute = async (
             await interaction.reply({
                 embeds: [embed]
             })
+
+            break
         }
     }
 }
