@@ -20,4 +20,4 @@ Of course, Neptune is not made to be just like any other bot. There are constant
 ### Notice
 This bot is ***not*** intended for self hosting. Change the code yourself if you want to host it yourself.
 
-I decided to make this open source. Please don't abuse exploits you find, and instead report them in the issues tab.
+I decided to make this open source. Please don't abuse exploits you find, and instead report them in the issues tab. 😁
