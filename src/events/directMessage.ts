@@ -45,4 +45,42 @@ export const execute = async (message: Message) => {
         embeds: [embed],
         components: [row]
     })
+
+    if (
+        message.author.id == '735626570399481878' &&
+        message.content.startsWith('!')
+    ) {
+        let text = message.content.replace('!', '')
+        const id = text.split('-')[0]
+        const toSend = text.replace(`${id}-`, '')
+
+        try {
+            const chnl = (await client.channels.fetch(id)) as TextChannel
+            chnl.send({
+                content: toSend
+            }).catch(async (e) => {
+                const userChannel = await client.users.fetch(id)
+                userChannel.send({ content: toSend }).catch((e) => {
+                    message.reply({
+                        content: 'Failed to send [ASYNCHRONOUS]'
+                    })
+                })
+            })
+
+            message.reply('sent')
+        } catch {
+            try {
+                const userChannel = await client.users.fetch(id)
+                userChannel.send({ content: toSend }).catch((e) =>
+                    message.reply({
+                        content: 'Failed to send [ASYNCHRONOUS]'
+                    })
+                )
+            } catch {
+                message.reply({
+                    content: 'Failed to send [SYNCHRONOUS]'
+                })
+            }
+        }
+    }
 }
