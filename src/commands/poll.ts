@@ -80,7 +80,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     const op4 = interaction.options.getString('option4')!
     const op5 = interaction.options.getString('option5')!
 
-    if (!getConfig(interaction).premium) {
+    if (interaction.options.getString('expiry') && !getConfig(interaction).premium) {
         await interaction.editReply({
             embeds: [
                 error(
