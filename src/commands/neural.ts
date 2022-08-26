@@ -10,6 +10,7 @@ import { error } from '../managers/errorManager.js'
 import { Command } from '../types/types'
 import { loading } from '../util/tools.js'
 import fs from 'fs'
+import fetch from 'node-fetch'
 
 export const data: Command = {
     name: 'neural',
@@ -44,7 +45,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
         })
     }
 
-    let res: Response | undefined
+    let res: any
     try {
         res = await fetch('http://local.xylight.us:80/neural/digit', {
             method: 'POST',
