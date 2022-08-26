@@ -22,3 +22,10 @@ export const error = (message: string) => {
 
     return embed
 }
+
+export const warning = (message: string) => {
+    return new EmbedBuilder()
+        .setTitle('Warning')
+        .setDescription(`${globalConfig.warningEmoji} ${message!}`)
+        .setColor(0xffc300)
+}

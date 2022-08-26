@@ -8,6 +8,7 @@ import ms from 'ms'
 import { logEmbed } from '../managers/logManager.js'
 import { DiscordAPIError } from 'discord.js'
 import { PermissionsBitField } from 'discord.js'
+import { warning } from '../managers/errorManager.js'
 
 export const data = new SlashCommandBuilder()
     .setName('mute')
@@ -56,6 +57,15 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
         ])
 
     const time = ms(duration) ?? ms('1h')
+    if (!duration.match('[a-zA-Z]')) {
+        interaction.channel!.send({
+            embeds: [
+                warning(
+                    `Did you mean to timeout for ${duration} **seconds?** The input value is being interpreted as ${duration} *milliseconds*.\nThe syntax for timeout durations is [number](s, m, h, d)`
+                )
+            ]
+        })
+    }
 
     const member = await interaction.guild!.members.cache.get(user.id)
     await member!.timeout(time)
