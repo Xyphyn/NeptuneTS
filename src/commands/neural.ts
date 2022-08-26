@@ -43,6 +43,8 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
         await interaction.editReply({
             embeds: [error('Not a supported file type.')]
         })
+
+        return
     }
 
     let res: any
