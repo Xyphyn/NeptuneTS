@@ -58,10 +58,11 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
                 imgUrl: `${attachment.url}`,
                 type: attachmentType
             })
-        }).catch((e) => {
+        }).catch(async (e) => {
         	await interaction.editReply({
         		embeds: [error("Neptune's neural network servers are currently offline.")]
         	})
+        	return
         })
     } catch {
         await interaction.editReply({
