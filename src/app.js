@@ -142,7 +142,9 @@ client.on('interactionCreate', async (interaction) => {
             'Subreddit not found.': 'That subreddit does not exist.',
             'Received one or more errors': "That user can't be banned.",
             'Could not decode image data':
-                'That is not an image or the image type is not supported.'
+                'That is not an image or the image type is not supported.',
+            "Cannot read properties of undefined (reading 'json')":
+                "Neptune's Neural servers are currently offline."
         }
         const stack = error.message
 
