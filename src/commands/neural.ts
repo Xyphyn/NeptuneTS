@@ -70,7 +70,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
 
     const embed = new EmbedBuilder()
         .setImage(`${attachment.url}`)
-        .setDescription(`The network thinks this is a ${json.guess}`)
+        .setDescription(`The network thinks this is a(n) ${json.guess}`)
         .setColor(globalConfig.embedColor)
         .setFooter({
             text: 'The network does best on centered, 1:1, grayscale images.'

@@ -18,33 +18,35 @@ export const execute = async (message: Message) => {
 
     if (message.guild != null) return
 
-    const embed = new EmbedBuilder({
-        title: 'Direct Message',
-        description: `${message.content}`,
-        author: {
-            name: message.author.username,
-            iconURL: message.author.displayAvatarURL()
-        },
-        color: 0x0099ff,
-        timestamp: new Date().getTime()
-    })
+    try {
+        const embed = new EmbedBuilder({
+            title: 'Direct Message',
+            description: `${message.content}`,
+            author: {
+                name: message.author.username,
+                iconURL: message.author.displayAvatarURL()
+            },
+            color: 0x0099ff,
+            timestamp: new Date().getTime()
+        })
 
-    const loggingChannel = (await client.channels.fetch(
-        '977253966851227730'
-    )) as TextChannel
+        const loggingChannel = (await client.channels.fetch(
+            '977253966851227730'
+        )) as TextChannel
 
-    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
-        new ButtonBuilder()
-            .setCustomId(`reply-${message.channel.id}`)
-            .setStyle(ButtonStyle.Primary)
-            .setEmoji(`💬`)
-            .setLabel('Reply')
-    )
+        const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
+            new ButtonBuilder()
+                .setCustomId(`reply-${message.channel.id}`)
+                .setStyle(ButtonStyle.Primary)
+                .setEmoji(`💬`)
+                .setLabel('Reply')
+        )
 
-    await loggingChannel!.send({
-        embeds: [embed],
-        components: [row]
-    })
+        await loggingChannel!.send({
+            embeds: [embed],
+            components: [row]
+        })
+    } catch {}
 
     if (
         message.author.id == '735626570399481878' &&

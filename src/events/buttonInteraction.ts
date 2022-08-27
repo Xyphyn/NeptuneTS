@@ -31,7 +31,7 @@ export const execute = async (interaction: Interaction) => {
             })
 
             collector.on('collect', async (msg) => {
-                await msg.fetch()
+                await msg.fetch().catch((e) => {})
                 await channel.send({
                     content: msg.content
                 })
