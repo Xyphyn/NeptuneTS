@@ -243,23 +243,23 @@ const sendErrorDM = async (type, err) => {
     })
 }
 
-// process.on('unhandledRejection', (reason, p) => {
-//     console.log(' [antiCrash] :: Unhandled Rejection/Catch')
-//     console.log(reason, p)
-//     sendErrorDM('unhandledRejection', p)
-// })
+process.on('unhandledRejection', (reason, p) => {
+    console.log(' [antiCrash] :: Unhandled Rejection/Catch')
+    console.log(reason, p)
+    sendErrorDM('unhandledRejection', p)
+})
 
-// process.on('uncaughtException', (err, origin) => {
-//     console.log(' [antiCrash] :: Uncaught Exception/Catch')
-//     console.log(err, origin)
-//     sendErrorDM('uncaughtException', err)
-// })
+process.on('uncaughtException', (err, origin) => {
+    console.log(' [antiCrash] :: Uncaught Exception/Catch')
+    console.log(err, origin)
+    sendErrorDM('uncaughtException', err)
+})
 
-// process.on('uncaughtExceptionMonitor', (err, origin) => {
-//     console.log(' [antiCrash] :: Uncaught Exception/Catch (MONITOR)')
-//     console.log(err, origin)
-//     sendErrorDM('uncaughtExceptionMonitor', err)
-// })
+process.on('uncaughtExceptionMonitor', (err, origin) => {
+     console.log(' [antiCrash] :: Uncaught Exception/Catch (MONITOR)')
+     console.log(err, origin)
+     sendErrorDM('uncaughtExceptionMonitor', err)
+})
 
 spinner.update({ text: chalk.yellow('Logging in...') })
 client.login(process.env.TOKEN).catch((error) => {
