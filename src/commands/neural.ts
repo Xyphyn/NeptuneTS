@@ -67,16 +67,19 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
         catdog: '/neural/catdog'
     }
 
-    const res = await fetch(`http://local.xylight.us:80${urls[subcommand]}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            imgUrl: `${attachment.url}`,
-            type: attachmentType
-        })
-    }).catch(async (e) => {
+    const res = await fetch(
+        `http://${process.env.NEURAL_SERVER}${urls[subcommand]}`,
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                imgUrl: `${attachment.url}`,
+                type: attachmentType
+            })
+        }
+    ).catch(async (e) => {
         await interaction.editReply({
             embeds: [
                 error("Neptune's neural network servers are currently offline.")
@@ -107,6 +110,18 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
             break
         }
         case 'catdog': {
+            const embed = new EmbedBuilder()
+                .setImage(`${attachment.url}`)
+                .setDescription(`The model thinks this is a ${json.guess}`)
+                .setColor(globalConfig.embedColor)
+                .setFooter({
+                    text: 'This model does best on centered, 1:1 images of cats and dogs.'
+                })
+
+            await interaction.editReply({
+                embeds: [embed]
+            })
+            break
         }
     }
 }

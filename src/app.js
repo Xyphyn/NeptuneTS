@@ -117,8 +117,6 @@ client.on('interactionCreate', async (interaction) => {
         interaction.reply('Commands are disabled in direct messages.')
         return
     }
-    await interaction.reply('Sorry, Neptune is offline for maintenance.')
-    return
     const command = client.commands.get(interaction.commandName)
 
     if (!command) return
