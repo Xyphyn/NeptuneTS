@@ -117,6 +117,8 @@ client.on('interactionCreate', async (interaction) => {
         interaction.reply('Commands are disabled in direct messages.')
         return
     }
+    await interaction.reply('Sorry, Neptune is offline for maintenance.')
+    return
     const command = client.commands.get(interaction.commandName)
 
     if (!command) return
@@ -256,9 +258,9 @@ process.on('uncaughtException', (err, origin) => {
 })
 
 process.on('uncaughtExceptionMonitor', (err, origin) => {
-     console.log(' [antiCrash] :: Uncaught Exception/Catch (MONITOR)')
-     console.log(err, origin)
-     sendErrorDM('uncaughtExceptionMonitor', err)
+    console.log(' [antiCrash] :: Uncaught Exception/Catch (MONITOR)')
+    console.log(err, origin)
+    sendErrorDM('uncaughtExceptionMonitor', err)
 })
 
 spinner.update({ text: chalk.yellow('Logging in...') })
