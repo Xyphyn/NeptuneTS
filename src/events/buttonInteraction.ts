@@ -14,6 +14,10 @@ export const execute = async (interaction: Interaction) => {
         )
             handle(interaction.message.id, interaction)
 
+        if (interaction.customId.startsWith('h')) {
+            interaction.reply("hey");
+        }
+
         if (interaction.customId.startsWith('reply-')) {
             const channel = (await client.channels.fetch(
                 `${interaction.customId.split('-')[1]}`
