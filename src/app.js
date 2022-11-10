@@ -130,6 +130,12 @@ client.on('interactionCreate', async (interaction) => {
 
     try {
         await command.execute(interaction, client)
+        const msg = await interaction.channel.send(
+            'Neptune is in the process of being rewritten in Kotlin. I apologize for any downtime or errors. (deleting after 30 seconds)'
+        )
+        setTimeout(() => {
+            msg.delete()
+        }, 30000)
     } catch (error) {
         // Error handler
         console.log(error)

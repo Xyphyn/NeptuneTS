@@ -1,11 +1,13 @@
 import {
     ChatInputCommandInteraction,
     EmbedBuilder,
-    SlashCommandBuilder
+    SlashCommandBuilder,
+    TextChannel
 } from 'discord.js'
 import { loadState } from '../config/config.js'
 import os from 'os'
 import { PermissionsBitField } from 'discord.js'
+import { client } from '../app.js'
 
 export const data = new SlashCommandBuilder()
     .setName('dev')
@@ -23,6 +25,17 @@ export const data = new SlashCommandBuilder()
     )
     .addSubcommand((subcommand) =>
         subcommand.setName('stop').setDescription('Stops the bot.')
+    )
+    .addSubcommand((subcommand) =>
+        subcommand
+            .setName('announce')
+            .setDescription('announces something to all servers the bot is in')
+            .addStringOption((option) =>
+                option
+                    .setName('announcement')
+                    .setDescription('What to announce')
+                    .setRequired(true)
+            )
     )
 
 export const permissions = PermissionsBitField.Flags.SendMessages
