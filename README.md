@@ -1,3 +1,5 @@
+**DISCONTINUED**
+
 <img src="https://i.imgur.com/niBtKLY.png" />
 A general purpose bot designed to handle many parts of your server.
 
