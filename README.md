@@ -1,4 +1,4 @@
-**DISCONTINUED**
+# DISCONTINUED in favor of the [Kotlin Rewrite](https://github.com/Xyphyn/Neptune)
 
 <img src="https://i.imgur.com/niBtKLY.png" />
 A general purpose bot designed to handle many parts of your server.
